@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ladi Homestay — Hanoi in your stay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap&subset=vietnamese" rel="stylesheet">
+<style>
+  :root{
+    --cream:#ECE4D6;
+    --cream-deep:#E4DAC8;
+    --paper:#F4EEE3;
+    --warm-white:#F6F1E8;
+    --beige:#C9A882;
+    --caramel:#A0724A;
+    --teal:#2D4A47;
+    --espresso:#3D2B1F;
+    --ink:#241910;
+    --line:rgba(61,43,31,0.16);
+    --line-soft:rgba(61,43,31,0.10);
+    --display:'Cormorant Garamond',Georgia,serif;
+    --serif:'Cormorant Garamond',Georgia,serif;
+    --sans:'Be Vietnam Pro',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--sans);font-weight:300;color:var(--espresso);
+    background:var(--cream);line-height:1.75;-webkit-font-smoothing:antialiased;
+    letter-spacing:0;overflow-x:hidden;
+  }
+  /* paper grain */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.5;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+  img{display:block;max-width:100%}
+  a{color:inherit;text-decoration:none}
+
+  /* ============ NAV ============ */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+    padding:22px 40px;transition:background .5s ease,padding .5s ease,box-shadow .5s ease;
+  }
+  nav.solid{background:rgba(236,228,214,.92);backdrop-filter:blur(10px);padding:14px 40px;box-shadow:0 1px 0 var(--line-soft)}
+  .nav-c{color:var(--warm-white);transition:color .5s ease}
+  nav.solid .nav-c{color:var(--espresso)}
+  .menu-btn{
+    justify-self:start;display:inline-flex;align-items:center;gap:10px;cursor:pointer;background:none;border:none;
+    font-family:var(--sans);font-weight:400;font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:inherit;
+  }
+  .menu-btn .bars{display:flex;flex-direction:column;gap:4px}
+  .menu-btn .bars span{display:block;width:20px;height:1.4px;background:currentColor;transition:.3s}
+  .menu-btn:hover .bars span:nth-child(1){transform:translateX(3px)}
+  .brand{justify-self:center;text-align:center;line-height:1}
+  .brand .mk{font-family:var(--serif);font-style:italic;font-weight:500;font-size:30px;letter-spacing:.02em}
+  .brand .tg{font-family:var(--sans);font-weight:400;font-size:9.5px;letter-spacing:.46em;text-transform:uppercase;margin-top:3px;opacity:.85}
+  .book{
+    justify-self:end;font-family:var(--sans);font-weight:400;font-size:12px;letter-spacing:.34em;text-transform:uppercase;
+    border-bottom:1px solid currentColor;padding-bottom:3px;transition:opacity .3s;
+  }
+  .book:hover{opacity:.6}
+
+  /* ============ MENU OVERLAY ============ */
+  .overlay{
+    position:fixed;inset:0;z-index:60;background:var(--ink);color:var(--warm-white);
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+    opacity:0;visibility:hidden;transition:opacity .5s ease,visibility .5s;padding:40px;
+  }
+  .overlay.open{opacity:1;visibility:visible}
+  .overlay::before{
+    content:"";position:absolute;inset:0;opacity:.5;mix-blend-mode:overlay;pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  }
+  .ov-close{position:absolute;top:26px;right:42px;background:none;border:none;color:var(--warm-white);cursor:pointer;
+    font-family:var(--sans);font-size:12px;letter-spacing:.34em;text-transform:uppercase}
+  .ov-close:hover{color:var(--beige)}
+  .ov-inner{position:relative;z-index:2;width:100%;max-width:760px;text-align:center}
+  .ov-tag{font-family:var(--sans);font-size:11px;letter-spacing:.42em;text-transform:uppercase;color:var(--beige);margin-bottom:38px}
+  .ov-group{margin-bottom:34px}
+  .ov-group .gl{font-family:var(--sans);font-size:10.5px;letter-spacing:.4em;text-transform:uppercase;color:rgba(246,241,232,.5);margin-bottom:14px}
+  .ov-links{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 34px}
+  .ov-links a{
+    font-family:var(--display);font-weight:500;font-size:clamp(22px,3.4vw,34px);line-height:1.25;letter-spacing:.01em;
+    color:var(--warm-white);opacity:.85;transition:.3s;position:relative;
+  }
+  .ov-links a:hover{opacity:1;color:var(--beige);letter-spacing:.05em}
+  .ov-foot{margin-top:30px;font-family:var(--serif);font-style:italic;font-size:19px;color:var(--beige)}
+
+  /* ============ HERO ============ */
+  .hero{position:relative;height:100vh;min-height:640px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .hero-bg{position:absolute;inset:0;
+    background:
+      linear-gradient(180deg, rgba(36,25,16,.28) 0%, rgba(36,25,16,.40) 58%, rgba(36,25,16,.62) 100%),
+      radial-gradient(90% 70% at 50% 45%, rgba(255,247,235,.18), transparent 62%),
+      url("assets/images/image-08.webp");
+    background-size:cover;
+    background-position:center;
+  }
+  .hero-bg::after{content:"";position:absolute;inset:0;background:rgba(36,25,16,.16)}
+  .hero-bg::before{content:"";position:absolute;inset:0;
+    background:radial-gradient(120% 95% at 50% 42%, transparent 42%, rgba(36,25,16,.62) 100%)}
+  .hero-inner{position:relative;z-index:3;text-align:center;color:var(--warm-white);padding:0 24px}
+  .hero-inner .kick{font-family:var(--sans);font-size:11px;letter-spacing:.5em;text-transform:uppercase;opacity:.8;margin-bottom:26px}
+  .hero-inner h1{font-family:var(--display);font-weight:500;font-size:clamp(46px,11vw,124px);line-height:.9;letter-spacing:0}
+  .hero-inner .style-line{font-family:var(--sans);font-size:clamp(13px,1.7vw,18px);font-weight:400;letter-spacing:.22em;
+    text-transform:uppercase;margin-top:18px;opacity:.9}
+  .hero-inner .stay{font-family:var(--serif);font-style:italic;font-size:clamp(18px,3.4vw,30px);margin-top:18px;opacity:.95}
+  .scroll-arrow{position:absolute;bottom:60px;left:50%;transform:translateX(-50%);z-index:3;color:var(--warm-white);
+    animation:bob 2.4s ease-in-out infinite}
+  .scroll-arrow svg{width:30px;height:30px;stroke:currentColor;fill:none;stroke-width:1}
+  @keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,10px)}}
+
+  /* ============ social links ============ */
+  .social-section{
+    position:absolute;left:50%;bottom:124px;transform:translateX(-50%);z-index:4;
+    padding:0;display:flex;align-items:center;justify-content:center;gap:14px;
+  }
+  .social-link{
+    width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+    border:1px solid rgba(246,241,232,.18);color:var(--warm-white);
+    background:rgba(246,241,232,.04);transition:transform .25s ease,border-color .25s ease,background .25s ease,color .25s ease;
+  }
+  .social-link:hover{
+    transform:translateY(-2px);border-color:rgba(246,241,232,.5);
+    background:rgba(246,241,232,.12);color:var(--beige);
+  }
+  .social-link svg{width:19px;height:19px;fill:currentColor}
+
+  /* ============ shared layout ============ */
+  .section{padding:96px 40px;position:relative;z-index:2}
+  .center{max-width:880px;margin:0 auto;text-align:center}
+  .eyebrow{font-family:var(--sans);font-size:11px;letter-spacing:.42em;text-transform:uppercase;color:var(--caramel);margin-bottom:24px}
+  h2.big{font-family:var(--display);font-weight:500;font-size:clamp(34px,6vw,62px);line-height:1.04;letter-spacing:0;color:var(--espresso)}
+  .lede{max-width:640px;margin:30px auto 0;font-family:var(--serif);font-size:21px;line-height:1.6;color:var(--espresso)}
+  .lede .en{display:block;font-style:italic;font-size:18px;color:var(--teal);margin-top:12px}
+  .btn{display:inline-block;margin-top:40px;font-family:var(--sans);font-weight:400;font-size:12px;letter-spacing:.32em;
+    text-transform:uppercase;padding:16px 42px;border:1px solid var(--espresso);color:var(--espresso);
+    transition:.35s;background:transparent}
+  .btn:hover{background:var(--espresso);color:var(--warm-white)}
+  .btn + .btn{margin-left:12px}
+  .btn-soft{border-color:var(--line);color:var(--caramel)}
+  .btn-soft:hover{border-color:var(--caramel);background:var(--caramel);color:var(--warm-white)}
+  .note-strip{max-width:640px;margin:34px auto 0;font-family:var(--sans);font-size:11.5px;letter-spacing:.05em;
+    color:var(--caramel);opacity:.85}
+
+  /* ============ photo grid ============ */
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1280px;margin:0 auto;padding:0 40px 8px}
+  .photo{position:relative;overflow:hidden;background:var(--cream-deep)}
+  .photo img{width:100%;height:100%;object-fit:cover}
+  .photo .ph-lab{position:absolute;left:14px;bottom:12px;z-index:3;font-family:var(--serif);font-style:italic;
+    font-size:14px;color:rgba(246,241,232,.92);letter-spacing:.02em}
+  .photo::after{content:"";position:absolute;inset:0;opacity:.45;mix-blend-mode:multiply;pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E")}
+  .ph-1{background:linear-gradient(150deg,#9a6f49,#c79c6e)}
+  .ph-2{background:linear-gradient(150deg,#cdb79a,#e7dac4)}
+  .ph-3{background:linear-gradient(150deg,#7c5a3d,#a8854f)}
+  .ph-4{background:linear-gradient(150deg,#33514c,#6f7e63)}
+  .ph-5{background:linear-gradient(150deg,#b9966b,#ddc8a6)}
+  .grid .photo{aspect-ratio:3/4}
+  #gioithieu{padding-bottom:42px}
+  #thuvien{padding-top:0!important;padding-bottom:58px}
+  #thuvien .grid{padding-bottom:0}
+  .guide-transition{
+    position:relative;z-index:2;max-width:900px;margin:0 auto 12px;padding:0 40px;text-align:center;
+    color:var(--espresso);
+  }
+  .guide-transition .rule{display:flex;align-items:center;gap:22px;margin-bottom:18px}
+  .guide-transition .rule::before,.guide-transition .rule::after{content:"";height:1px;flex:1;background:var(--line)}
+  .guide-transition .mark{
+    font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:.36em;text-transform:uppercase;
+    color:var(--caramel);white-space:nowrap;
+  }
+  .guide-transition h3{
+    font-family:var(--serif);font-size:clamp(24px,3vw,34px);font-weight:500;line-height:1.18;
+    margin:0;color:var(--espresso);
+  }
+  .guide-transition p{
+    margin:8px 0 0;font-size:14px;color:var(--teal);font-family:var(--serif);font-style:italic;
+  }
+
+  /* ============ group label ============ */
+  .grouphead{max-width:1100px;margin:36px auto 8px;padding:0 40px;display:flex;align-items:center;gap:26px}
+  .grouphead .ln{flex:1;height:1px;background:var(--line)}
+  .grouphead h3{font-family:var(--display);font-weight:500;font-size:clamp(26px,4vw,40px);letter-spacing:0;
+    color:var(--espresso);white-space:nowrap}
+  .grouphead .sub{display:block;font-family:var(--sans);font-size:10.5px;letter-spacing:.36em;text-transform:uppercase;
+    color:var(--caramel);text-align:center;margin-top:6px}
+
+  /* ============ guide section ============ */
+  .guide{max-width:1100px;margin:0 auto;padding:54px 40px;border-bottom:1px solid var(--line-soft)}
+  .guide-inner{display:grid;grid-template-columns:300px 1fr;gap:56px;align-items:start}
+  .guide-side{position:sticky;top:110px}
+  .g-num{font-family:var(--display);font-weight:500;font-size:46px;color:var(--beige);line-height:1;margin-bottom:14px}
+  .g-ic{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;background:var(--paper);
+    border:1px solid var(--line-soft);margin-bottom:18px}
+  .g-ic svg{width:26px;height:26px;stroke:var(--caramel);fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+  .guide-side h4{font-family:var(--display);font-weight:500;font-size:30px;line-height:1.12;letter-spacing:0;color:var(--espresso)}
+  .guide-side .gsub{font-family:var(--serif);font-style:italic;font-size:17px;color:var(--teal);margin-top:4px}
+  .guide-side .sphoto{margin-top:22px;aspect-ratio:4/3;border-radius:4px}
+
+  .content p{margin:0 0 16px;font-size:16px;font-weight:300}
+  .content h5{font-family:var(--serif);font-weight:600;font-size:21px;letter-spacing:0;color:var(--teal);margin:28px 0 10px}
+  .content ul,.content ol{margin:0 0 18px;padding-left:22px}
+  .content li{margin-bottom:9px;font-size:15.5px;font-weight:300}
+  .content strong{font-weight:500;color:var(--espresso)}
+  .content em{font-family:var(--serif);font-style:italic;font-size:18px;color:var(--teal);display:block;margin-top:24px}
+  .content blockquote{border-left:2px solid var(--beige);background:rgba(201,168,130,.14);padding:14px 20px;
+    border-radius:0 8px 8px 0;margin:0 0 20px}
+  .content blockquote p{margin:0;font-size:15px}
+  .content table{width:100%;border-collapse:collapse;margin:0 0 20px;font-size:15px}
+  .content td{border:1px solid var(--line);padding:12px 16px}
+  .content td:first-child{width:42%;color:var(--caramel)}
+  .ph{background:rgba(160,114,74,.16);border-radius:5px;padding:1px 8px;font-family:var(--sans);font-size:.88em;
+    color:var(--caramel);white-space:nowrap;font-weight:400}
+
+  /* ============ language accordions ============ */
+  .language-block{padding:14px 40px 28px;position:relative;z-index:2;background:var(--cream)}
+  .language-shell{max-width:1040px;margin:0 auto}
+  .language-note{max-width:760px;margin:0 auto 42px;color:var(--espresso);font-size:16px;line-height:1.85}
+  .language-note ul{margin:0;padding-left:22px}
+  .language-note li{margin:0 0 18px;padding-left:4px}
+  .language-note p{margin:0 0 6px}
+  .language-note strong{font-weight:500;color:var(--caramel)}
+  .lang-list{display:grid;gap:16px}
+  .lang-panel{
+    border:1px solid rgba(61,43,31,.16);background:rgba(246,241,232,.72);
+    border-radius:8px;overflow:hidden;box-shadow:0 10px 28px -24px rgba(61,43,31,.45);
+    transition:border-color .25s ease,box-shadow .25s ease,background .25s ease;
+  }
+  .lang-panel:hover{border-color:rgba(160,114,74,.42);background:rgba(246,241,232,.9);box-shadow:0 18px 38px -28px rgba(61,43,31,.55)}
+  .lang-panel[open]{border-color:rgba(160,114,74,.62);background:rgba(251,247,240,.86)}
+  .lang-panel > summary{
+    list-style:none;display:grid;grid-template-columns:auto 34px 1fr;align-items:center;gap:10px;
+    min-height:52px;padding:10px 20px;cursor:pointer;color:var(--espresso);user-select:none;
+  }
+  .lang-panel > summary::-webkit-details-marker{display:none}
+  .lang-panel > summary::before{
+    content:"";width:0;height:0;border-top:6px solid transparent;border-bottom:6px solid transparent;
+    border-left:8px solid var(--espresso);transition:transform .24s ease;justify-self:center;
+  }
+  .lang-panel[open] > summary::before{transform:rotate(90deg)}
+  .flag{
+    font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.04em;line-height:1;
+    color:var(--espresso);text-transform:uppercase;
+  }
+  .lang-name{
+    font-family:var(--sans);font-weight:400;font-size:16px;line-height:1.45;
+    letter-spacing:0;color:var(--espresso);
+  }
+  .lang-name.cjk{font-family:var(--sans);font-weight:400;letter-spacing:0}
+  .lang-panel .inside{border-top:1px solid var(--line-soft);padding:22px 28px;background:rgba(246,241,232,.72)}
+  .lang-panel .inside-note{font-size:15px;margin:0 0 16px;color:var(--caramel)}
+  .lang-panel .mini-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .lang-panel .mini-links a{
+    display:block;border:1px solid var(--line-soft);border-radius:6px;padding:11px 13px;
+    background:var(--warm-white);font-size:14px;transition:.25s;
+  }
+  .lang-panel .mini-links a:hover{border-color:var(--beige);color:var(--caramel);transform:translateY(-1px)}
+  .lang-panel .inside > .grouphead{margin-top:18px}
+  .lang-panel .inside > .guide{padding-left:0;padding-right:0}
+  .lang-panel.vietnamese{border-color:rgba(160,114,74,.62)}
+  .lang-panel.english{border-color:rgba(160,114,74,.32)}
+
+  .section-stack{display:grid;gap:28px}
+  .info-section{border-top:1px solid var(--line);padding-top:28px}
+  .info-section:first-child{border-top:0;padding-top:0}
+  .info-title{font-family:var(--display);font-weight:500;font-size:clamp(25px,3.3vw,38px);line-height:1.12;color:var(--espresso);margin:0 0 14px}
+  .info-title .sub{display:block;font-family:var(--sans);font-size:10.5px;letter-spacing:.32em;text-transform:uppercase;color:var(--caramel);margin-top:6px}
+  .info-block{border:1px solid var(--line-soft);border-radius:8px;background:rgba(246,241,232,.62);overflow:hidden;margin:10px 0}
+  .info-block > summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:15px 18px;font-family:var(--serif);font-weight:600;font-size:20px;line-height:1.25;color:var(--teal)}
+  .info-block > summary::-webkit-details-marker{display:none}
+  .info-block > summary::after{content:"+";font-family:var(--sans);font-size:18px;color:var(--caramel);line-height:1}
+  .info-block[open] > summary::after{content:"-"}
+  .info-block .block-body{border-top:1px solid var(--line-soft);padding:18px 22px 20px}
+  .block-photo{width:100%;aspect-ratio:16/9;border-radius:6px;margin:0 0 18px;background:var(--cream-deep)}
+  .block-photo img{width:100%;height:100%;object-fit:cover;border-radius:6px}
+  .ac-photo-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:0 0 18px}
+  .ac-photo-row .block-photo{margin:0}
+  .map-button{display:inline-flex;align-items:center;justify-content:center;margin:0 0 16px;padding:11px 16px;border:1px solid rgba(160,114,74,.42);border-radius:6px;background:var(--warm-white);font-family:var(--sans);font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--espresso);text-decoration:none;transition:border-color .22s ease,color .22s ease,transform .22s ease}
+  .map-button:hover{border-color:var(--caramel);color:var(--caramel);transform:translateY(-1px)}  .route-layout{display:grid;grid-template-columns:minmax(160px,240px) 1fr;gap:22px;align-items:start;margin-top:18px}
+  .route-video{position:relative;aspect-ratio:9/16;border-radius:8px;overflow:hidden;background:rgba(61,43,31,.10);border:1px solid var(--line-soft)}
+  .route-video video{width:100%;height:100%;object-fit:cover;display:block;background:var(--cream-deep)}
+  .route-video .video-label{position:absolute;left:12px;right:12px;bottom:12px;padding:9px 10px;border-radius:5px;background:rgba(36,25,16,.58);color:var(--warm-white);font-family:var(--sans);font-size:11px;letter-spacing:.08em;text-transform:uppercase;text-align:center}
+  .route-grab-photo{margin:14px 0 0}
+  /* ============ friend / closing ============ */
+  .friend{background:var(--cream-deep);position:relative;z-index:2}
+  .favorite-proof{background:var(--cream-deep);position:relative;z-index:2;padding:34px 24px 18px}
+  .favorite-card{
+    max-width:940px;margin:0 auto;border:1px solid rgba(64,45,33,.18);border-radius:12px;background:rgba(255,255,255,.42);
+    display:grid;grid-template-columns:1.15fr 1.65fr .62fr .62fr;align-items:center;gap:28px;
+    padding:24px 32px;color:var(--espresso);box-shadow:0 12px 30px rgba(64,45,33,.04)
+  }
+  .fav-badge{display:flex;align-items:center;justify-content:center;gap:10px;font-family:var(--sans);font-weight:700;font-size:19px;line-height:1.08}
+  .fav-badge img{width:22px;height:34px;object-fit:contain;display:block;flex:0 0 auto}
+  .fav-copy{font-family:var(--sans);font-size:17px;font-weight:600;line-height:1.22}
+  .fav-score,.fav-reviews{font-family:var(--sans);text-align:center;border-left:1px solid rgba(64,45,33,.16);padding-left:22px}
+  .fav-score strong,.fav-reviews strong{display:block;font-size:24px;line-height:1;font-weight:700}
+  .fav-stars{font-size:12px;letter-spacing:1px;margin-top:8px}
+  .fav-reviews span{display:block;font-size:13px;font-weight:700;margin-top:6px}
+  .friend-inner{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:stretch}
+  .friend-photo{min-height:560px}
+  .friend-txt{padding:88px 80px;display:flex;flex-direction:column;justify-content:center}
+  .friend-txt h3{font-family:var(--display);font-weight:500;font-size:clamp(26px,3.4vw,38px);letter-spacing:0;margin-bottom:8px}
+  .friend-txt .fsub{font-family:var(--serif);font-style:italic;font-size:19px;color:var(--teal);margin-bottom:28px}
+  .friend-txt p{font-size:15.5px;margin-bottom:16px;max-width:520px}
+  .fcontact{margin-top:14px;border-top:1px solid var(--line);padding-top:22px;font-size:14px}
+  .fcontact .row{display:flex;justify-content:space-between;gap:20px;padding:7px 0;border-bottom:1px solid var(--line-soft)}
+  .fcontact .row span:first-child{color:var(--caramel);letter-spacing:.04em}
+
+  /* ============ footer ============ */
+  footer{background:var(--ink);color:var(--warm-white);text-align:center;padding:64px 40px 54px;position:relative;z-index:2}
+  footer .fmk{font-family:var(--serif);font-style:italic;font-size:32px;margin-bottom:6px}
+  footer .ftag{font-family:var(--sans);font-size:10px;letter-spacing:.46em;text-transform:uppercase;color:var(--beige);margin-bottom:26px}
+  footer .fline{font-size:13px;color:rgba(246,241,232,.7);letter-spacing:.03em}
+  footer .fcta{display:inline-block;margin-top:26px;font-family:var(--sans);font-size:11px;letter-spacing:.32em;
+    text-transform:uppercase;border:1px solid rgba(246,241,232,.4);padding:14px 38px;transition:.35s}
+  footer .fcta:hover{background:var(--warm-white);color:var(--ink);border-color:var(--warm-white)}
+
+  /* ============ reveal ============ */
+  .rv{opacity:1;transform:none;transition:opacity .9s ease,transform .9s cubic-bezier(.2,.7,.3,1)}
+  .rv.in{opacity:1;transform:none}
+
+  /* ============ responsive ============ */
+  @media(max-width:900px){
+    nav{padding:16px 22px}
+    nav.solid{padding:12px 22px}
+    .section{padding:72px 24px}
+    #gioithieu{padding-bottom:30px}
+    #thuvien{padding-bottom:48px}
+    .grid{grid-template-columns:repeat(2,1fr);padding:0 22px}
+    .guide-transition{margin-bottom:10px;padding:0 24px}
+    .guide-transition .rule{gap:14px}
+    .guide{padding:44px 24px}
+    .guide-inner{grid-template-columns:1fr;gap:26px}
+    .guide-side{position:static}
+    .guide-side .sphoto{display:none}
+    .language-block{padding:12px 24px 12px}
+    .lang-panel .mini-links{grid-template-columns:1fr}
+    .friend-inner{grid-template-columns:1fr}
+    .favorite-proof{padding:24px 16px 10px}
+    .favorite-card{grid-template-columns:1fr;gap:16px;padding:22px 20px;text-align:center}
+    .fav-score,.fav-reviews{border-left:0;border-top:1px solid rgba(64,45,33,.16);padding:16px 0 0}
+    .fav-badge{font-size:18px}
+    .fav-copy{font-size:16px}
+    .friend-photo{min-height:300px}
+    .friend-txt{padding:54px 28px}
+    .brand .mk{font-size:24px}
+    .grouphead{gap:14px;padding:0 22px}
+  }
+  @media(max-width:520px){
+    .book{font-size:10px;letter-spacing:.22em}
+    .menu-btn{font-size:10px;letter-spacing:.22em}
+    .brand .tg{letter-spacing:.28em}
+    .hero{min-height:560px}
+    .hero-inner .kick{letter-spacing:.28em;line-height:1.7}
+    .hero-inner .style-line{letter-spacing:.12em;line-height:1.5}
+    .social-section{bottom:112px}
+    .btn{display:block;width:100%;max-width:290px;margin:28px auto 0;padding-left:18px;padding-right:18px}
+    .btn + .btn{margin-left:auto;margin-top:12px}
+    .grouphead h3{white-space:normal;text-align:center}
+    .content table,.content tbody,.content tr,.content td{display:block;width:100%}
+    .content td:first-child{width:100%;border-bottom:0}
+    .ph{white-space:normal}
+    .lang-panel > summary{grid-template-columns:auto 30px 1fr;min-height:50px;padding:10px 14px}
+    .flag{font-size:11px}
+    .lang-name{font-size:15px}
+    .lang-panel .inside{padding:20px 16px}
+    .route-layout{grid-template-columns:1fr}
+    .ac-photo-row{grid-template-columns:1fr;gap:14px}
+    .route-video{max-width:260px;width:100%;margin:0 auto}
+    .fcontact .row{display:block}
+    .fcontact .row span{display:block}
+    .grid{grid-template-columns:1fr 1fr;gap:10px}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav id="nav">
+  <button class="menu-btn nav-c" onclick="openMenu()">
+    <span class="bars"><span></span><span></span></span> Menu
+  </button>
+  <a href="#top" class="brand nav-c">
+    <div class="mk">Ladi</div>
+    <div class="tg">Homestay</div>
+  </a>
+  <a class="book nav-c" href="https://www.airbnb.com/rooms/1451455893156768862" target="_blank" rel="noopener">Book</a>
+</nav>
+
+<!-- ============ MENU OVERLAY ============ -->
+<div class="overlay" id="overlay">
+  <button class="ov-close" onclick="closeMenu()">Đóng ✕</button>
+  <div class="ov-inner">
+    <div class="ov-tag">Ladi Homestay · Guest Guide</div>
+    <div class="ov-group">
+      <div class="gl">Khám phá</div>
+      <div class="ov-links">
+        <a href="#gioithieu" onclick="closeMenu()">Chào mừng</a>
+        <a href="#thuvien" onclick="closeMenu()">Không gian</a>
+        <a href="#languages" onclick="closeMenu()">Ngôn ngữ</a>
+        <a href="#friend" onclick="closeMenu()">Host Ladi</a>
+      </div>
+    </div>
+    <div class="ov-group">
+      <div class="gl">Thông tin · Information</div>
+      <div class="ov-links">
+        <a href="#diachi" onclick="closeMenu()">Địa chỉ & Nội quy</a>
+        <a href="#checkin" onclick="closeMenu()">Tự Check-in</a>
+        <a href="#wifi" onclick="closeMenu()">WiFi</a>
+        <a href="#rac" onclick="closeMenu()">Vệ sinh</a>
+      </div>
+    </div>
+    <div class="ov-group">
+      <div class="gl">Thiết bị trong nhà · Appliances</div>
+      <div class="ov-links">
+        <a href="#dieuhoa" onclick="closeMenu()">Điều hoà & Nóng lạnh</a>
+        <a href="#bep" onclick="closeMenu()">Bếp từ</a>
+        <a href="#lo" onclick="closeMenu()">Lò vi sóng</a>
+        <a href="#tv" onclick="closeMenu()">Smart TV</a>
+        <a href="#maygiat" onclick="closeMenu()">Khu giặt sấy</a>
+      </div>
+    </div>
+    <div class="ov-foot">Hanoi in your stay</div>
+  </div>
+</div>
+
+<!-- ============ HERO ============ -->
+<header class="hero" id="top">
+  <div class="hero-bg"></div>
+  <div class="hero-inner">
+    <div class="kick">Số 2 Nhà Thờ · Hoàn Kiếm · Hà Nội</div>
+    <h1>LADI<br>HOMESTAY</h1>
+    <div class="style-line">Scandi-Korean Fusion Style</div>
+    <div class="stay">Hanoi in your stay</div>
+  </div>
+  <a href="#gioithieu" class="scroll-arrow" aria-label="Cuộn xuống">
+    <svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+  </a>
+  <div class="social-section" aria-label="Ladi Homestay social links">
+  <a class="social-link" href="https://www.facebook.com/ladihomestay" target="_blank" rel="noopener" aria-label="Ladi Homestay Facebook">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.2 8.3V6.8c0-.7.5-.9.9-.9h2.3V2.1L14.1 2c-3.7 0-4.5 2.7-4.5 4.5v1.8H6.7v4.2h2.9V22h4.4v-9.5h3.2l.5-4.2h-3.5Z"/></svg>
+  </a>
+  <a class="social-link" href="https://www.instagram.com/ladihomestayhn/" target="_blank" rel="noopener" aria-label="Ladi Homestay Instagram">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.6 2h8.8A5.6 5.6 0 0 1 22 7.6v8.8a5.6 5.6 0 0 1-5.6 5.6H7.6A5.6 5.6 0 0 1 2 16.4V7.6A5.6 5.6 0 0 1 7.6 2Zm0 2A3.6 3.6 0 0 0 4 7.6v8.8A3.6 3.6 0 0 0 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6A3.6 3.6 0 0 0 16.4 4H7.6Zm4.4 3.2A4.8 4.8 0 1 1 7.2 12 4.8 4.8 0 0 1 12 7.2Zm0 2A2.8 2.8 0 1 0 14.8 12 2.8 2.8 0 0 0 12 9.2Zm5-2.45a1.15 1.15 0 1 1-1.15 1.15A1.15 1.15 0 0 1 17 6.75Z"/></svg>
+  </a>
+  <a class="social-link" href="https://www.tiktok.com/@ladihomestay" target="_blank" rel="noopener" aria-label="Ladi Homestay TikTok">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.7 2c.35 3 2.05 4.8 5.05 5v3.35a8.4 8.4 0 0 1-4.9-1.5v6.55c0 4.25-2.8 6.6-6.25 6.6-3.75 0-6.35-2.75-6.35-6.1 0-3.7 2.9-6.05 6.55-6.05.55 0 1.05.05 1.5.18v3.55a4.2 4.2 0 0 0-1.45-.25c-1.8 0-2.95 1.05-2.95 2.55 0 1.45 1.05 2.55 2.65 2.55 1.65 0 2.65-.95 2.65-3.05V2h3.5Z"/></svg>
+  </a>
+  </div>
+</header>
+
+<!-- ============ INTRO ============ -->
+<section class="section" id="gioithieu">
+  <div class="center rv">
+    <div class="eyebrow">Chào mừng về nhà</div>
+    <h2 class="big">MỘT KHÔNG GIAN MANG<br>HƠI THỞ HÀ NỘI</h2>
+    <p class="lede">
+      Ngay trong lòng phố cổ — dưới chân Nhà Thờ Lớn. Mong bạn ở lại thật thong thả, như đang sống ở Hà Nội.
+      <span class="en">A space with the soul of Hanoi, right by the Cathedral. Stay slow, and feel at home.</span>
+    </p>
+  </div>
+</section>
+
+<!-- ============ PHOTO GRID ============ -->
+<section class="section" id="thuvien" style="padding-top:0">
+  <div class="grid rv">
+    <div class="photo"><img src="assets/images/image-12.webp" alt="Phòng ngủ Ladi Homestay"><span class="ph-lab">Phòng ngủ</span></div>
+    <div class="photo"><img src="assets/images/image-10.webp" alt="Phòng ăn Ladi Homestay"><span class="ph-lab">Phòng Ăn</span></div>
+    <div class="photo"><img src="assets/images/image-09.webp" alt="Khu giặt sấy Ladi Homestay"><span class="ph-lab">Khu Giặt Sấy</span></div>
+    <div class="photo"><img src="assets/images/image-11.webp" alt="Bồn tắm Ladi Homestay"><span class="ph-lab">Bồn tắm</span></div>
+  </div>
+</section>
+
+<div class="guide-transition rv">
+  <div class="rule"><span class="mark">Guest Guide</span></div>
+  <h3>Choose your language</h3>
+  <p>All essential information for your stay</p>
+</div>
+
+<!-- ============ LANGUAGE ACCORDIONS ============ -->
+<section class="language-block" id="languages">
+  <div class="language-shell">
+    <div class="language-note rv">
+      <ul>
+        <li>
+          <p>Hello, this is <strong>Ladi Homestay</strong>. 🙂</p>
+          <p>Click the triangle to the left of the language to get instructions.</p>
+        </li>
+        <li>
+          <p>こんにちは、<strong>Ladi Homestay</strong> です。🙂</p>
+          <p>言語の左側の三角をクリックすると、案内事項が表示されます。</p>
+        </li>
+        <li>
+          <p>您好，这里是 <strong>Ladi Homestay</strong>。🙂</p>
+          <p>点击语言左侧三角形就会出现提示事项。</p>
+        </li>
+      </ul>
+    </div>
+
+    <div class="lang-list">
+  <details class="lang-panel vietnamese">
+    <summary><span class="flag">VN</span><span class="lang-name">Bấm vào đây để xem thêm thông tin</span></summary>
+    <div class="inside">
+      <div class="section-stack">
+        <section class="info-section" id="thongtin-chung">
+          <h3 class="info-title">1. Thông tin chung<span class="sub">General information</span></h3>
+          <details class="info-block" id="diachi" open><summary>1.1 Vị trí</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/nha-tho-lon.webp" alt="Nhà Thờ Lớn Hà Nội gần Ladi Churchside 1"><span class="ph-lab">Vị trí</span></div>
+            <div class="route-layout">
+              <div>
+                <div class="route-video">
+                  <video controls playsinline preload="metadata" src="assets/videos/check-in-instruction.mp4"></video>
+                  <span class="video-label">Video hướng dẫn 9:16</span>
+                </div>
+                <div class="photo block-photo route-grab-photo"><img src="assets/images/cong-ca-phe.webp" alt="Đặt Grab tới Cộng Cà Phê"><span class="ph-lab">Đặt Grab tới Cộng Cà Phê</span></div>
+              </div>
+              <div>
+                <a class="map-button" href="https://maps.app.goo.gl/ymnfotyUvcRKWo1u5" target="_blank" rel="noopener">google map Ladi Homestay</a><p><strong>Địa chỉ:</strong> Số 2 Nhà Thờ, phường Hàng Trống, quận Hoàn Kiếm, Hà Nội.<br><strong>Căn của bạn:</strong> Tầng <span class="ph">2</span> — Ladi Churchside 1, nằm trong con ngõ ngay dưới chân Nhà Thờ Lớn.</p>
+                <blockquote><p><strong>Lưu ý khi đi Grab hoặc Taxi:</strong> hãy đặt địa chỉ tới <strong>Cộng Cà Phê - 27 Phố Nhà Thờ</strong>, sau đó đi theo video hướng dẫn. Do căn hộ nằm trong địa điểm du lịch nên ô tô không được vào cửa; bạn chỉ cần đi bộ khoảng <strong>1 phút</strong> là đến Airbnb.</p></blockquote>
+                <blockquote><p>Toà nhà là nhà phố cổ, <strong>không có thang máy</strong>. Nếu bạn nhiều hành lý, hãy nhắn host trước, chúng tôi sẽ cố gắng hỗ trợ vận chuyển vali khi cần.</p></blockquote>
+                <ul><li><strong>1 phút</strong> đi bộ tới Nhà Thờ Lớn Hà Nội.</li><li><strong>4-5 phút</strong> đi bộ tới Hồ Hoàn Kiếm, Tháp Rùa, Đền Ngọc Sơn, Cầu Thê Húc, Phố Sách và Nhà tù Hoả Lò.</li><li><strong>5 phút</strong> tới Nhà hát Múa rối Nước Thăng Long.</li><li><strong>8 phút</strong> tới Phố cổ Hà Nội như Hàng Gai, Tạ Hiện, Tràng Tiền Plaza và Văn Miếu - Quốc Tử Giám.</li><li>Ngay dưới chân toà nhà có Trà Chanh Nhà Thờ, phở Tư Lùn và nhiều quán cà phê địa phương.</li></ul>
+              </div>
+            </div>
+          </div></details>
+          <details class="info-block" id="thongtinthem"><summary>1.2 Thông tin thêm</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-12.webp" alt="Phòng ngủ Ladi Homestay"><span class="ph-lab">Thông tin thêm</span></div>
+            <ul><li><strong>Concept:</strong> Scandi-Korean Fusion Style — tối giản, ấm áp và thư thái.</li><li><strong>Không gian:</strong> sử dụng toàn bộ tầng 2 với 2 phòng ngủ, 1 bếp và 1 khu vệ sinh lớn.</li><li><strong>Sức chứa tối đa:</strong> 4 người lớn và 1 trẻ em.</li><li><strong>Tiện nghi:</strong> WiFi, bàn làm việc, bàn trang điểm, rèm, móc treo quần áo, bồn tắm, khăn tắm, dầu gội, sữa tắm, nước uống, trà và cà phê miễn phí.</li><li><strong>Giặt ủi:</strong> máy giặt sấy, bột giặt và nước xả vải được chuẩn bị miễn phí.</li><li><strong>Khu vệ sinh:</strong> bồn tắm và nhà tắm đứng tách riêng; lavabo tách riêng để nhóm 4-5 người sử dụng thuận tiện hơn.</li><li>Máy sấy tóc, sữa tắm, dầu gội, kem đánh răng và bàn chải được cung cấp sẵn.</li></ul>
+          </div></details>
+          <details class="info-block" id="noiquy"><summary>1.3 Nội Quy</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-14.webp" alt="Nội quy Ladi Homestay"><span class="ph-lab">Nội Quy</span></div>
+            <ul><li><strong>Không hút thuốc</strong> trong căn, kể cả thuốc lá điện tử. Vui lòng chỉ hút ở khu vực ngoài trời được chỉ định.</li><li><strong>Không mang theo thú cưng, không tổ chức tiệc tùng</strong> và không có khách ngoài số lượng đã đăng ký.</li><li><strong>Tôn trọng giờ yên tĩnh sau 23:00</strong>, không gây ồn hoặc nói to vì đây là quy định của khu dân cư.</li><li><strong>Không chia sẻ mã truy cập</strong> với người ngoài.</li><li>Không đặt đồ vệ sinh cá nhân hoặc khăn ướt vào bồn cầu để tránh tắc nghẽn.</li><li>Không có chỗ ở riêng cho trẻ vị thành niên, không quay phim thương mại khi chưa được phép.</li></ul>
+          </div></details>
+          <details class="info-block" id="khan-cap"><summary>1.4 Liên Hệ Khẩn cấp</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/contact-emergency.webp" alt="Liên hệ khẩn cấp Ladi Homestay"><span class="ph-lab">Liên Hệ Khẩn cấp</span></div>
+            <ul><li>Host <strong>Ladi</strong> (Superhost) — <span class="ph">+84 97 340 19 95</span>, phản hồi trong 1 giờ.</li><li>Cấp cứu 115 · Cảnh sát 113 · Cứu hoả 114.</li></ul>
+          </div></details>
+          <details class="info-block" id="hotro"><summary>1.5 Dịch vụ hỗ trợ thêm</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/support-services.webp" alt="Dịch vụ hỗ trợ Ladi Homestay"><span class="ph-lab">Dịch vụ hỗ trợ thêm</span></div>
+            <ul><li>Hỗ trợ đặt xe đưa đón sân bay theo yêu cầu. Vui lòng liên hệ host trước ít nhất 1 ngày.</li><li>Hỗ trợ tìm và đặt tour Hạ Long, Ninh Bình và City Tour.</li><li>Host có thể gửi thêm gợi ý địa điểm tham quan, món ăn và đồ uống nên thử tại Hà Nội.</li></ul>
+          </div></details>
+        </section>
+        <section class="info-section" id="checkin-checkout">
+          <h3 class="info-title">2. Checkin &amp; Check Out<span class="sub">Arrival and departure</span></h3>
+          <details class="info-block" id="checkin"><summary>2.1 Check-In</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-01.webp" alt="Khoá thông minh Ladi Homestay"><span class="ph-lab">Check-In</span></div>
+            <p>Ladi dùng <strong>khoá thông minh</strong>, bạn tự nhận phòng 24/7, không cần gặp ai. Link hướng dẫn chi tiết, bao gồm video và mã cửa, sẽ được gửi trước ngày bạn đến.</p>
+            <blockquote><p>Vì căn hộ nằm sát Nhà Thờ Lớn, xe có thể không dừng ngay trước cửa vào một số thời điểm. Bạn có thể cần đi bộ khoảng <strong>100m</strong> để tới căn hộ.</p></blockquote>
+            <ul><li><strong>Check-in:</strong> sau <span class="ph">14:00</span></li><li>Cửa toà nhà mở bằng mã <span class="ph">8386</span> hoặc đẩy nhẹ.</li><li>Lên tầng <span class="ph">3</span> theo cầu thang bộ.</li><li>Chạm bàn phím khoá căn → nhập <span class="ph">2020</span> → nhấn <strong>#</strong> hoặc <strong>✓</strong>.</li><li>Vui lòng không chia sẻ mã cửa cho người ngoài.</li></ul>
+          </div></details>
+          <details class="info-block" id="checkout"><summary>2.2 Check-Out</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/checkout.webp" alt="Check-out Ladi Homestay"><span class="ph-lab">Check-Out</span></div>
+            <ul><li><strong>Check-out:</strong> trước <span class="ph">11:00</span>.</li><li>Cần sớm/muộn? Nhắn host, sẽ thu xếp khi căn còn trống.</li><li><strong>Gửi hành lý miễn phí</strong> trước khi nhận phòng và sau khi trả phòng.</li><li>Khi ra ngoài, cửa sẽ <strong>tự khoá</strong> khi đóng. Để chắc, chạm biểu tượng ổ khoá tới khi nghe tiếng khoá.</li><li>Trước khi rời đi, vui lòng tắt thiết bị điện và kiểm tra tư trang cá nhân.</li></ul>
+          </div></details>
+        </section>
+        <section class="info-section" id="huongdan-thietbi">
+          <h3 class="info-title">3. Hướng dẫn sử dụng các thiết bị trong nhà<span class="sub">In-home appliance guide</span></h3>
+          <details class="info-block" id="wifi"><summary>3.1 WiFi</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-06.webp" alt="Thông tin WiFi Ladi Homestay"><span class="ph-lab">WiFi</span></div><p>WiFi miễn phí, tốc độ ổn định — đủ để họp online và làm việc từ xa.</p><table><tr><td>Tên WiFi (SSID)</td><td><span class="ph">Ladi</span></td></tr><tr><td>Mật khẩu</td><td><span class="ph">12345689</span></td></tr></table><ol><li>Tắt/bật WiFi trên điện thoại rồi kết nối lại.</li><li>Vẫn chậm? Rút nguồn modem <span class="ph">bên trên trần nhà</span>, đợi 30 giây, cắm lại.</li><li>Vẫn lỗi? Nhắn host Ladi.</li></ol></div></details>
+          <details class="info-block" id="dieuhoa"><summary>3.2 Điều Hoà &amp; Bình Nóng Lạnh</summary><div class="block-body content"><div class="ac-photo-row"><div class="photo block-photo"><img src="assets/images/image-15.webp" alt="Điều hoà và bình nóng lạnh Ladi Homestay"><span class="ph-lab">Điều Hoà &amp; Bình Nóng Lạnh</span></div><div class="photo block-photo"><img src="assets/images/image-02.webp" alt="Công tắc bình nóng lạnh Ladi Homestay"><span class="ph-lab">Công tắc bình nóng lạnh</span></div></div><h5>Điều hoà</h5><ol><li>Dùng điều khiển bật/tắt.</li><li>Chọn chế độ <strong>Cool</strong>.</li><li>Đặt <strong>25-26°C</strong> là dễ chịu và tiết kiệm nhất.</li><li><strong>Tắt khi ra khỏi nhà.</strong></li></ol><h5>Bình nóng lạnh</h5><ol><li>Bật công tắc ở <span class="ph">bên cạnh bồn rửa mặt</span>.</li><li>Chờ <strong>10-15 phút</strong> cho nước nóng.</li><li>Xả bồn tắm nên bật bình sớm hơn khoảng 20 phút.</li><li>Tắt bình sau khi tắm cho an toàn.</li></ol></div></details>
+          <details class="info-block" id="bep"><summary>3.3 Bếp từ</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-07.webp" alt="Bếp từ Ladi Homestay"><span class="ph-lab">Bếp từ</span></div><blockquote><p>Khu bếp đã chuẩn bị sẵn ấm đun nước siêu tốc, bếp, máy hút mùi, tủ lạnh và dụng cụ nấu nướng cơ bản.</p></blockquote><ol><li>Chỉ dùng nồi/chảo đáy phẳng dùng được cho bếp từ.</li><li>Nhấn <strong>Power</strong>, đặt nồi lên vùng nấu và chỉnh nhiệt bằng <strong>+ / -</strong>.</li><li><strong>Bật máy hút mùi</strong> khi sử dụng bếp.</li><li>Nấu xong tắt bếp và lau khi bếp đã nguội.</li></ol></div></details>
+          <details class="info-block" id="lo"><summary>3.4 Lò Vi Sóng</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-04.webp" alt="Lò vi sóng Ladi Homestay"><span class="ph-lab">Lò Vi Sóng</span></div><ol><li>Cho thức ăn vào bát/đĩa chịu nhiệt, không dùng kim loại hoặc đồ có viền nhũ.</li><li>Đóng cửa lò, chọn thời gian và nhấn <strong>Start</strong>.</li><li>Đậy hờ khi hâm để tránh bắn.</li><li>Cẩn thận đồ nóng khi lấy ra.</li></ol></div></details>
+          <details class="info-block" id="tv"><summary>3.5 Smart TV</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-13.webp" alt="Smart TV Ladi Homestay"><span class="ph-lab">Smart TV</span></div><p>Smart TV đã cài sẵn <strong>Netflix</strong> và <strong>YouTube</strong>.</p><ol><li>Bật TV bằng điều khiển.</li><li>Chọn <strong>Smart TV / Home</strong> nếu đang ở cổng HDMI.</li><li>Nếu đăng nhập tài khoản cá nhân, vui lòng đăng xuất trước khi trả phòng.</li></ol></div></details>
+          <details class="info-block" id="maygiat"><summary>3.6 Máy Giặt sấy</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/laundry-area.webp" alt="Máy giặt sấy Ladi Homestay"><span class="ph-lab">Máy Giặt sấy</span></div><ul><li>Máy giặt sấy, bột giặt và nước xả vải được chuẩn bị miễn phí.</li><li>Không giặt quá tải để máy hoạt động ổn định.</li><li>Kiểm tra túi quần áo trước khi giặt.</li><li>Sau khi dùng, để hé cửa máy một lúc cho khô thoáng.</li></ul></div></details>
+          <details class="info-block" id="maysuoi"><summary>3.7 Máy Sưởi</summary><div class="block-body content"><div class="route-layout heater-video-layout"><div class="route-video"><video controls playsinline preload="metadata" src="assets/videos/heater-guide.mp4"></video><span class="video-label">Video hướng dẫn 9:16</span></div><div><p>Hãy xem video để biết cách sử dụng máy sưởi trong phòng tắm. Nếu cần hỗ trợ gì, hãy liên hệ với chúng tôi.</p><ul><li>Tắt máy sưởi trước khi ra ngoài hoặc đi ngủ.</li></ul></div></div></div></details>
+          <details class="info-block" id="thietbikhac"><summary>3.8 Các thiết bị khác</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-12.webp" alt="Các thiết bị khác Ladi Homestay"><span class="ph-lab">Các thiết bị khác</span></div><ul><li>Các đèn trong căn có 3 màu: trắng, vàng và trung tính.</li><li>Đèn ngủ và đèn khu vực bồn tắm giúp không gian ấm hơn và chụp ảnh đẹp hơn.</li><li>Vui lòng tắt tất cả thiết bị điện trước khi ra ngoài để tránh chập điện hoặc nguy cơ cháy nổ.</li><li>Khu vực hút thuốc chỉ ở ngoài trời, tuyệt đối không hút trong phòng.</li></ul></div></details>
+        </section>
+      </div>
+    </div>
+  </details>
+
+  <details class="lang-panel korean">
+    <summary><span class="flag">KR</span><span class="lang-name cjk">자세한 정보를 보려면 여기를 클릭하세요</span></summary>
+    <div class="inside"><div class="section-stack">
+      <section class="info-section" id="kr-general"><h3 class="info-title">1. 일반 정보<span class="sub">General information</span></h3>
+        <details class="info-block" id="kr-address"><summary>1.1 위치</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/nha-tho-lon.webp" alt="St. Joseph Cathedral near Ladi Churchside 1"><span class="ph-lab">위치</span></div><div class="route-layout"><div><div class="route-video"><video controls playsinline preload="metadata" src="assets/videos/check-in-instruction.mp4"></video><span class="video-label">9:16 안내 영상</span></div><div class="photo block-photo route-grab-photo"><img src="assets/images/cong-ca-phe.webp" alt="Grab 목적지 Cong Ca Phe"><span class="ph-lab">Grab 목적지 Cong Ca Phe</span></div></div><div><a class="map-button" href="https://maps.app.goo.gl/ymnfotyUvcRKWo1u5" target="_blank" rel="noopener">google map Ladi Homestay</a><p><strong>주소:</strong> No. 2 Nha Tho St., Hang Trong Ward, Hoan Kiem, Hanoi.<br><strong>숙소:</strong> <span class="ph">2층</span> — Ladi Churchside 1, 성 요셉 대성당 바로 아래 골목 안에 있습니다.</p><blockquote><p><strong>Grab 또는 택시 이용 시:</strong> 목적지를 <strong>Cong Ca Phe - 27 Nha Tho Street</strong>로 설정한 뒤 안내 영상을 따라와 주세요. 관광지 안쪽이라 차량이 입구까지 들어오지 못할 수 있으며, Airbnb까지는 도보 약 <strong>1분</strong>입니다.</p></blockquote><blockquote><p>오래된 타운하우스라 <strong>엘리베이터가 없습니다</strong>. 짐이 많으시면 미리 연락해 주세요. 필요 시 캐리어 이동을 도와드리겠습니다.</p></blockquote><ul><li>성 요셉 대성당까지 도보 <strong>1분</strong>.</li><li>호안끼엠 호수, 거북탑, 응옥선 사당, 테훅 다리, 책거리, 호아로 감옥까지 도보 <strong>4-5분</strong>.</li><li>탕롱 수상인형극장까지 <strong>5분</strong>.</li><li>항가이, 따히엔, 짱띠엔 플라자, 문묘 등 구시가지 주요 장소까지 약 <strong>8분</strong>.</li><li>건물 아래에는 현지 레몬티, 쌀국수, 카페가 있습니다.</li></ul></div></div></div></details>
+        <details class="info-block" id="kr-extra"><summary>1.2 추가 정보</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-12.webp" alt="Bedroom Ladi Homestay"><span class="ph-lab">추가 정보</span></div><ul><li><strong>컨셉:</strong> Scandi-Korean Fusion Style — 미니멀하고 따뜻하며 편안한 분위기.</li><li><strong>공간:</strong> 2층 전체 사용, 침실 2개, 주방 1개, 넓은 욕실 공간 1개.</li><li><strong>최대 인원:</strong> 성인 4명과 어린이 1명.</li><li>WiFi, 업무용 책상, 화장대, 커튼, 옷걸이가 준비되어 있습니다.</li><li>욕조, 수건, 샴푸, 바디워시, 치약, 칫솔, 생수, 차와 커피는 무료입니다.</li><li>세탁건조기, 세제, 섬유유연제도 무료로 준비되어 있습니다.</li></ul></div></details>
+        <details class="info-block" id="kr-rules"><summary>1.3 숙소 규칙</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-14.webp" alt="House rules Ladi Homestay"><span class="ph-lab">숙소 규칙</span></div><ul><li><strong>실내 흡연 금지</strong>, 전자담배 포함. 지정된 야외 공간에서만 흡연해 주세요.</li><li><strong>반려동물, 파티, 미등록 게스트</strong>는 허용되지 않습니다.</li><li><strong>23:00 이후 조용히</strong> 지내 주세요.</li><li>예약 인원 외 외부인에게 출입 코드를 공유하지 마세요.</li><li>위생용품이나 젖은 수건을 변기에 넣지 마세요.</li><li>미성년자 단독 숙박 및 허가 없는 상업 촬영은 불가합니다.</li></ul></div></details>
+        <details class="info-block" id="kr-emergency"><summary>1.4 긴급 연락</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/contact-emergency.webp" alt="Emergency contact Ladi Homestay"><span class="ph-lab">긴급 연락</span></div><ul><li>Host <strong>Ladi</strong> (Superhost) — <span class="ph">+84 97 340 19 95</span>, 1시간 이내 응답.</li><li>응급 115 · 경찰 113 · 소방 114.</li></ul></div></details>
+        <details class="info-block" id="kr-support"><summary>1.5 추가 지원 서비스</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/support-services.webp" alt="Support services Ladi Homestay"><span class="ph-lab">추가 지원 서비스</span></div><ul><li>공항 픽업/샌딩 예약을 도와드릴 수 있습니다. 최소 하루 전 연락해 주세요.</li><li>하롱베이, 닌빈, 하노이 시티투어 예약을 도와드릴 수 있습니다.</li><li>하노이에서 가볼 만한 곳, 음식, 음료 추천도 보내드립니다.</li><li>체크인 전과 체크아웃 후 무료 짐 보관이 가능합니다.</li></ul></div></details>
+      </section>
+      <section class="info-section" id="kr-checkin-checkout"><h3 class="info-title">2. 체크인 &amp; 체크아웃<span class="sub">Arrival and departure</span></h3>
+        <details class="info-block" id="kr-checkin"><summary>2.1 체크인</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-01.webp" alt="Smart lock Ladi Homestay"><span class="ph-lab">체크인</span></div><p>Ladi는 <strong>스마트 도어락</strong>을 사용하여 24시간 셀프 체크인이 가능합니다. 영상과 비밀번호가 포함된 자세한 안내는 도착 하루 전 보내드립니다.</p><blockquote><p>숙소가 성 요셉 대성당 옆 관광지에 있어 일부 시간에는 차량이 입구 바로 앞에 정차하기 어렵습니다. 약 <strong>100m</strong> 정도 걸어오셔야 할 수 있습니다.</p></blockquote><ul><li><strong>체크인:</strong> <span class="ph">14:00</span> 이후.</li><li>건물 출입 코드: <span class="ph">8386</span> 또는 문을 가볍게 밀어 주세요.</li><li><span class="ph">2층</span>으로 올라오세요.</li><li>도어락 키패드를 터치 → <span class="ph">2020</span> 입력 → <strong>#</strong> 또는 <strong>✓</strong>.</li><li>출입 코드를 외부인에게 공유하지 마세요.</li></ul></div></details>
+        <details class="info-block" id="kr-checkout"><summary>2.2 체크아웃</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/checkout.webp" alt="Check-out Ladi Homestay"><span class="ph-lab">체크아웃</span></div><ul><li><strong>체크아웃:</strong> <span class="ph">11:00</span> 전.</li><li>이른/늦은 시간 조정이 필요하면 메시지 주세요. 가능할 경우 도와드립니다.</li><li>체크인 전과 체크아웃 후 <strong>무료 짐 보관</strong>이 가능합니다.</li><li>문은 닫으면 <strong>자동 잠금</strong>됩니다. 확실히 하려면 자물쇠 아이콘을 터치해 주세요.</li><li>퇴실 전 전기 기기를 끄고 개인 소지품을 확인해 주세요.</li></ul></div></details>
+      </section>
+      <section class="info-section" id="kr-appliances"><h3 class="info-title">3. 실내 기기 사용 안내<span class="sub">In-home appliance guide</span></h3>
+        <details class="info-block" id="kr-wifi"><summary>3.1 WiFi</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-06.webp" alt="WiFi Ladi Homestay"><span class="ph-lab">WiFi</span></div><p>무료 WiFi가 제공되며 온라인 회의와 원격 근무에 충분합니다.</p><table><tr><td>네트워크</td><td><span class="ph">Ladi</span></td></tr><tr><td>비밀번호</td><td><span class="ph">12345689</span></td></tr></table><ol><li>휴대폰 WiFi를 껐다 켠 후 다시 연결해 주세요.</li><li>느리면 <span class="ph">천장 위</span> 라우터 전원을 뽑고 30초 후 다시 연결해 주세요.</li><li>계속 문제가 있으면 Host Ladi에게 메시지 주세요.</li></ol></div></details>
+        <details class="info-block" id="kr-ac"><summary>3.2 에어컨 &amp; 온수기</summary><div class="block-body content"><div class="ac-photo-row"><div class="photo block-photo"><img src="assets/images/image-15.webp" alt="AC and water heater Ladi Homestay"><span class="ph-lab">에어컨 &amp; 온수기</span></div><div class="photo block-photo"><img src="assets/images/image-02.webp" alt="Water heater switch Ladi Homestay"><span class="ph-lab">온수기 스위치</span></div></div><h5>에어컨</h5><ol><li>리모컨으로 전원을 켜고 끕니다.</li><li><strong>Cool</strong> 모드를 선택하세요.</li><li><strong>25-26°C</strong>가 가장 편안하고 절약됩니다.</li><li>외출 시 반드시 꺼 주세요.</li></ol><h5>온수기</h5><ol><li><span class="ph">세면대 옆</span> 스위치를 켭니다.</li><li>온수가 나오기까지 <strong>10-15분</strong> 기다립니다.</li><li>욕조를 사용할 경우 약 20분 전에 켜 주세요.</li><li>샤워 후 안전을 위해 꺼 주세요.</li></ol></div></details>
+        <details class="info-block" id="kr-cooktop"><summary>3.3 인덕션</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-07.webp" alt="Induction cooktop Ladi Homestay"><span class="ph-lab">인덕션</span></div><blockquote><p>주방에는 전기포트, 인덕션, 후드, 냉장고와 기본 조리도구가 준비되어 있습니다.</p></blockquote><ol><li>인덕션용 평평한 냄비/팬만 사용해 주세요.</li><li><strong>Power</strong>를 누르고 조리구역에 냄비를 올린 뒤 <strong>+ / -</strong>로 조절합니다.</li><li>요리할 때는 <strong>후드</strong>를 켜 주세요.</li><li>사용 후 전원을 끄고 식은 뒤 닦아 주세요.</li></ol></div></details>
+        <details class="info-block" id="kr-microwave"><summary>3.4 전자레인지</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-04.webp" alt="Microwave Ladi Homestay"><span class="ph-lab">전자레인지</span></div><ol><li>전자레인지용 용기만 사용하고 금속/은박/금테 식기는 넣지 마세요.</li><li>문을 닫고 시간을 선택한 뒤 <strong>Start</strong>를 누릅니다.</li><li>데울 때는 튀지 않도록 살짝 덮어 주세요.</li><li>꺼낼 때 뜨거울 수 있으니 조심하세요.</li></ol></div></details>
+        <details class="info-block" id="kr-tv"><summary>3.5 Smart TV</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-13.webp" alt="Smart TV Ladi Homestay"><span class="ph-lab">Smart TV</span></div><p>Smart TV에는 <strong>Netflix</strong>와 <strong>YouTube</strong>가 설치되어 있습니다.</p><ol><li>리모컨으로 TV를 켭니다.</li><li>HDMI 화면이면 <strong>Smart TV / Home</strong>을 선택합니다.</li><li>개인 계정으로 로그인했다면 체크아웃 전 로그아웃해 주세요.</li></ol></div></details>
+        <details class="info-block" id="kr-laundry"><summary>3.6 세탁건조기</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/laundry-area.webp" alt="Washer dryer Ladi Homestay"><span class="ph-lab">세탁건조기</span></div><ul><li>세탁건조기, 세제, 섬유유연제가 무료로 준비되어 있습니다.</li><li>과부하 세탁은 피해주세요.</li><li>세탁 전 주머니를 확인해 주세요.</li><li>사용 후 문을 살짝 열어 건조해 주세요.</li></ul></div></details>
+        <details class="info-block" id="kr-heater"><summary>3.7 히터</summary><div class="block-body content"><div class="route-layout heater-video-layout"><div class="route-video"><video controls playsinline preload="metadata" src="assets/videos/heater-guide.mp4"></video><span class="video-label">9:16 안내 영상</span></div><div><p>욕실 히터 사용 방법은 영상을 확인해 주세요. 도움이 필요하시면 언제든 저희에게 연락해 주세요.</p><ul><li>외출하거나 잠들기 전에는 히터를 꺼 주세요.</li></ul></div></div></div></details>
+        <details class="info-block" id="kr-other"><summary>3.8 기타 기기</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-12.webp" alt="Other devices Ladi Homestay"><span class="ph-lab">기타 기기</span></div><ul><li>조명은 흰색, 노란색, 중간색 3가지 톤이 있습니다.</li><li>침대 조명과 욕조 주변 조명은 공간을 더 따뜻하게 만들어 사진도 예쁘게 나옵니다.</li><li>외출 전 모든 전기 기기를 꺼 주세요.</li><li>흡연은 야외에서만 가능하며 실내 흡연은 절대 금지입니다.</li></ul></div></details>
+      </section>
+    </div></div>
+  </details>
+
+  <details class="lang-panel english">
+    <summary><span class="flag">EN</span><span class="lang-name">Click here for more information</span></summary>
+    <div class="inside"><div class="section-stack">
+      <section class="info-section" id="en-general"><h3 class="info-title">1. General Information<span class="sub">Thông tin chung</span></h3>
+        <details class="info-block" id="en-address"><summary>1.1 Location</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/nha-tho-lon.webp" alt="St. Joseph Cathedral near Ladi Churchside 1"><span class="ph-lab">Location</span></div><div class="route-layout"><div><div class="route-video"><video controls playsinline preload="metadata" src="assets/videos/check-in-instruction.mp4"></video><span class="video-label">9:16 guide video</span></div><div class="photo block-photo route-grab-photo"><img src="assets/images/cong-ca-phe.webp" alt="Set Grab to Cong Ca Phe"><span class="ph-lab">Set Grab to Cong Ca Phe</span></div></div><div><a class="map-button" href="https://maps.app.goo.gl/ymnfotyUvcRKWo1u5" target="_blank" rel="noopener">google map Ladi Homestay</a><p><strong>Address:</strong> No. 2 Nha Tho St., Hang Trong Ward, Hoan Kiem, Hanoi.<br><strong>Your unit:</strong> Floor <span class="ph">2</span> — Ladi Churchside 1, located in the alley right under St. Joseph's Cathedral.</p><blockquote><p><strong>Note for Grab or Taxi:</strong> set your destination to <strong>Cong Ca Phe - 27 Nha Tho Street</strong>, then follow the guide video. Because the apartment is in a tourist area, cars may not enter the door area; it is only about a <strong>1-minute</strong> walk to the Airbnb.</p></blockquote><blockquote><p>The building is an old townhouse with <strong>no elevator</strong>. If you have heavy luggage, please message us in advance and we will try to support carrying your suitcase when needed.</p></blockquote><ul><li><strong>1 minute</strong> walk to St. Joseph's Cathedral.</li><li><strong>4-5 minutes</strong> to Hoan Kiem Lake, Turtle Tower, Ngoc Son Temple, The Huc Bridge, Book Street and Hoa Lo Prison.</li><li><strong>5 minutes</strong> to Thang Long Water Puppet Theatre.</li><li><strong>8 minutes</strong> to Hanoi Old Quarter streets such as Hang Gai and Ta Hien, Trang Tien Plaza and the Temple of Literature.</li><li>Right downstairs you will find local lemon tea, pho and coffee spots.</li></ul></div></div></div></details>
+        <details class="info-block" id="en-extra"><summary>1.2 Additional Information</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-12.webp" alt="Bedroom Ladi Homestay"><span class="ph-lab">Additional Information</span></div><ul><li><strong>Concept:</strong> Scandi-Korean Fusion Style — minimal, warm and calm.</li><li>Use of the entire 2nd floor with <strong>2 bedrooms, 1 kitchen and 1 large bathroom area</strong>.</li><li>Maximum capacity: <strong>4 adults and 1 child</strong>.</li><li>Free WiFi, work desk, vanity table, curtains and hangers are prepared.</li><li>Bathtub, towels, shampoo, body wash, toothpaste, toothbrushes, drinking water, tea and coffee are complimentary.</li><li>Washer-dryer, detergent and fabric softener are prepared free of charge.</li></ul></div></details>
+        <details class="info-block" id="en-rules"><summary>1.3 House Rules</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-14.webp" alt="House rules Ladi Homestay"><span class="ph-lab">House Rules</span></div><ul><li><strong>No smoking indoors</strong>, including e-cigarettes. Please smoke only in the outdoor designated area.</li><li><strong>No pets, no parties</strong> and no unregistered guests.</li><li><strong>Quiet hours after 23:00</strong>. Please avoid loud noise or speaking loudly.</li><li><strong>Do not share access codes</strong> with anyone outside your reservation.</li><li>Do not put personal hygiene products or wet towels into the toilet to avoid blockage.</li><li>No separate stay for minors and no commercial filming without permission.</li></ul></div></details>
+        <details class="info-block" id="en-emergency"><summary>1.4 Emergency Contact</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/contact-emergency.webp" alt="Emergency contact Ladi Homestay"><span class="ph-lab">Emergency Contact</span></div><ul><li>Host <strong>Ladi</strong> (Superhost) — <span class="ph">+84 97 340 19 95</span>, response within 1 hour.</li><li>Ambulance 115 · Police 113 · Fire 114.</li></ul></div></details>
+        <details class="info-block" id="en-support"><summary>1.5 Extra Support Services</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/support-services.webp" alt="Support services Ladi Homestay"><span class="ph-lab">Extra Support Services</span></div><ul><li>Airport transfer can be arranged on request. Please message us at least 1 day in advance.</li><li>We can help find and book Ha Long, Ninh Binh and Hanoi city tours.</li><li>We can also share local recommendations for sightseeing, food and drinks in Hanoi.</li><li>Free luggage storage is available before check-in and after check-out.</li></ul></div></details>
+      </section>
+      <section class="info-section" id="en-checkin-checkout"><h3 class="info-title">2. Check-in &amp; Check-out<span class="sub">Arrival and departure</span></h3>
+        <details class="info-block" id="en-checkin"><summary>2.1 Check-In</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-01.webp" alt="Smart lock Ladi Homestay"><span class="ph-lab">Check-In</span></div><p>Ladi uses a <strong>smart lock</strong>, so you can self check-in 24/7 without meeting anyone. The detailed guide, including video and door codes, will be sent one day before arrival.</p><blockquote><p>Because the apartment is beside St. Joseph's Cathedral, one of the busiest tourist areas, cars may not stop directly at the door at some times. You may need to walk about <strong>100m</strong> to reach the apartment.</p></blockquote><ul><li><strong>Check-in:</strong> after <span class="ph">14:00</span>.</li><li>Building door code: <span class="ph">8386</span> or gently push the door.</li><li>Walk up to floor <span class="ph">2</span>.</li><li>Touch the keypad → enter <span class="ph">2020</span> → press <strong>#</strong> or <strong>✓</strong>.</li><li>Please do not share the access codes with outsiders.</li></ul></div></details>
+        <details class="info-block" id="en-checkout"><summary>2.2 Check-Out</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/checkout.webp" alt="Check-out Ladi Homestay"><span class="ph-lab">Check-Out</span></div><ul><li><strong>Check-out:</strong> before <span class="ph">11:00</span>.</li><li>Need early/late timing? Message us and we will arrange it if available.</li><li><strong>Free luggage storage</strong> is available before check-in and after check-out.</li><li>The door will <strong>lock automatically</strong> when closed. To be sure, touch the lock icon until you hear it lock.</li><li>Before leaving, please turn off electrical devices and check your belongings.</li></ul></div></details>
+      </section>
+      <section class="info-section" id="en-appliances"><h3 class="info-title">3. In-home Appliance Guide<span class="sub">Hướng dẫn thiết bị</span></h3>
+        <details class="info-block" id="en-wifi"><summary>3.1 WiFi</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-06.webp" alt="WiFi Ladi Homestay"><span class="ph-lab">WiFi</span></div><p>Free stable WiFi, suitable for online meetings and remote work.</p><table><tr><td>Network</td><td><span class="ph">Ladi</span></td></tr><tr><td>Password</td><td><span class="ph">12345689</span></td></tr></table><ol><li>Turn WiFi off/on on your phone and reconnect.</li><li>If still slow, unplug the router <span class="ph">above the ceiling</span>, wait 30 seconds, plug it back in and wait about 1 minute.</li><li>If it still does not work, message Host Ladi.</li></ol></div></details>
+        <details class="info-block" id="en-ac"><summary>3.2 AC &amp; Water Heater</summary><div class="block-body content"><div class="ac-photo-row"><div class="photo block-photo"><img src="assets/images/image-15.webp" alt="AC and water heater Ladi Homestay"><span class="ph-lab">AC &amp; Water Heater</span></div><div class="photo block-photo"><img src="assets/images/image-02.webp" alt="Water heater switch Ladi Homestay"><span class="ph-lab">Water heater switch</span></div></div><h5>Air conditioner</h5><ol><li>Use the remote to turn it on/off.</li><li>Select <strong>Cool</strong> mode.</li><li><strong>25-26°C</strong> is comfortable and energy-saving.</li><li><strong>Turn it off when leaving.</strong></li></ol><h5>Water heater</h5><ol><li>Turn on the switch <span class="ph">next to the sink</span>.</li><li>Wait <strong>10-15 minutes</strong> for hot water.</li><li>For the bathtub, turn it on about 20 minutes earlier.</li><li>Turn it off after showering for safety.</li></ol></div></details>
+        <details class="info-block" id="en-cooktop"><summary>3.3 Induction Cooktop</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-07.webp" alt="Induction cooktop Ladi Homestay"><span class="ph-lab">Induction Cooktop</span></div><blockquote><p>The kitchen is prepared with an electric kettle, cooktop, range hood, refrigerator and basic cookware.</p></blockquote><ol><li>Use only induction-compatible flat-bottom cookware.</li><li>Press <strong>Power</strong>, place the pot on the cooking zone and adjust heat with <strong>+ / -</strong>.</li><li><strong>Turn on the range hood</strong> while cooking.</li><li>Turn the cooktop off after use and wipe it after it cools.</li></ol></div></details>
+        <details class="info-block" id="en-microwave"><summary>3.4 Microwave</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-04.webp" alt="Microwave Ladi Homestay"><span class="ph-lab">Microwave</span></div><ol><li>Use microwave-safe bowls/plates only, no metal or gold/silver rimmed items.</li><li>Close the door, choose time and press <strong>Start</strong>.</li><li>Cover loosely when reheating to avoid splashing.</li><li>Be careful when taking out hot food.</li></ol></div></details>
+        <details class="info-block" id="en-tv"><summary>3.5 Smart TV</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-13.webp" alt="Smart TV Ladi Homestay"><span class="ph-lab">Smart TV</span></div><p>The Smart TV has <strong>Netflix</strong> and <strong>YouTube</strong> installed.</p><ol><li>Turn on the TV with the remote.</li><li>Select <strong>Smart TV / Home</strong> if it is on HDMI.</li><li>If you log in to a personal account, please log out before check-out.</li></ol></div></details>
+        <details class="info-block" id="en-laundry"><summary>3.6 Washer-Dryer</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/laundry-area.webp" alt="Washer dryer Ladi Homestay"><span class="ph-lab">Washer-Dryer</span></div><ul><li>Washer-dryer, detergent and fabric softener are prepared free of charge.</li><li>Do not overload the machine.</li><li>Check pockets before washing.</li><li>After use, leave the door slightly open for ventilation.</li></ul></div></details>
+        <details class="info-block" id="en-heater"><summary>3.7 Heater</summary><div class="block-body content"><div class="route-layout heater-video-layout"><div class="route-video"><video controls playsinline preload="metadata" src="assets/videos/heater-guide.mp4"></video><span class="video-label">9:16 guide video</span></div><div><p>Please watch the video to learn how to use the bathroom heater. If you need any support, please contact us.</p><ul><li>Turn the heater off before leaving or going to sleep.</li></ul></div></div></div></details>
+        <details class="info-block" id="en-other"><summary>3.8 Other Devices</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-12.webp" alt="Other devices Ladi Homestay"><span class="ph-lab">Other Devices</span></div><ul><li>The apartment lights have three tones: white, warm yellow and neutral.</li><li>Bedside and bathtub-area lights make the space warmer and better for photos.</li><li>Please turn off all electrical devices before going out to avoid electrical issues or fire risk.</li><li>Smoking is allowed only outdoors. Please do not smoke inside the room.</li></ul></div></details>
+      </section>
+    </div></div>
+  </details>
+
+  <details class="lang-panel chinese">
+    <summary><span class="flag">CN</span><span class="lang-name cjk">点击这里查看更多信息</span></summary>
+    <div class="inside"><div class="section-stack">
+      <section class="info-section" id="cn-general"><h3 class="info-title">1. 基本信息<span class="sub">General information</span></h3>
+        <details class="info-block" id="cn-address"><summary>1.1 位置</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/nha-tho-lon.webp" alt="St. Joseph Cathedral near Ladi Churchside 1"><span class="ph-lab">位置</span></div><div class="route-layout"><div><div class="route-video"><video controls playsinline preload="metadata" src="assets/videos/check-in-instruction.mp4"></video><span class="video-label">9:16 指南视频</span></div><div class="photo block-photo route-grab-photo"><img src="assets/images/cong-ca-phe.webp" alt="Grab定位到Cong Ca Phe"><span class="ph-lab">Grab定位到Cong Ca Phe</span></div></div><div><a class="map-button" href="https://maps.app.goo.gl/ymnfotyUvcRKWo1u5" target="_blank" rel="noopener">google map Ladi Homestay</a><p><strong>地址：</strong>No. 2 Nha Tho St., Hang Trong Ward, Hoan Kiem, Hanoi.<br><strong>您的房源：</strong><span class="ph">2楼</span> — Ladi Churchside 1，位于圣若瑟大教堂脚下的小巷内。</p><blockquote><p><strong>乘坐Grab或出租车时：</strong>请将目的地设为 <strong>Cong Ca Phe - 27 Nha Tho Street</strong>，然后按照视频指引步行前往。由于公寓位于旅游区内，汽车可能无法开到入口；步行约<strong>1分钟</strong>即可到达Airbnb。</p></blockquote><blockquote><p>本楼为老城区联排老房，<strong>没有电梯</strong>。如行李较多，请提前联系我们，我们会尽量协助搬运行李。</p></blockquote><ul><li>步行<strong>1分钟</strong>到圣若瑟大教堂。</li><li>步行<strong>4-5分钟</strong>到还剑湖、龟塔、玉山祠、栖旭桥、书街和火炉监狱。</li><li><strong>5分钟</strong>到升龙水上木偶剧院。</li><li>约<strong>8分钟</strong>到河内老城区如Hang Gai、Ta Hien、Trang Tien Plaza和文庙。</li><li>楼下就有本地柠檬茶、河粉和咖啡店。</li></ul></div></div></div></details>
+        <details class="info-block" id="cn-extra"><summary>1.2 更多信息</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-12.webp" alt="Bedroom Ladi Homestay"><span class="ph-lab">更多信息</span></div><ul><li><strong>风格：</strong>Scandi-Korean Fusion Style — 简约、温暖、舒适。</li><li>整套使用二楼，含2间卧室、1个厨房和1个宽敞卫浴区域。</li><li>最多可住：<strong>4位成人和1位儿童</strong>。</li><li>提供WiFi、工作桌、梳妆台、窗帘和衣架。</li><li>浴缸、毛巾、洗发水、沐浴露、牙膏、牙刷、饮用水、茶和咖啡均免费。</li><li>洗烘一体机、洗衣液和柔顺剂免费提供。</li></ul></div></details>
+        <details class="info-block" id="cn-rules"><summary>1.3 房屋规则</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-14.webp" alt="House rules Ladi Homestay"><span class="ph-lab">房屋规则</span></div><ul><li><strong>室内禁止吸烟</strong>，包括电子烟。请仅在指定室外区域吸烟。</li><li><strong>禁止宠物、派对</strong>和未登记访客。</li><li><strong>23:00后请保持安静</strong>。</li><li>请勿向预订外人员分享门锁密码。</li><li>请勿将卫生用品或湿毛巾放入马桶，避免堵塞。</li><li>未成年人不得单独入住，未经许可不得商业拍摄。</li></ul></div></details>
+        <details class="info-block" id="cn-emergency"><summary>1.4 紧急联系</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/contact-emergency.webp" alt="Emergency contact Ladi Homestay"><span class="ph-lab">紧急联系</span></div><ul><li>Host <strong>Ladi</strong> (Superhost) — <span class="ph">+84 97 340 19 95</span>，通常1小时内回复。</li><li>急救115 · 警察113 · 消防114。</li></ul></div></details>
+        <details class="info-block" id="cn-support"><summary>1.5 额外服务</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/support-services.webp" alt="Support services Ladi Homestay"><span class="ph-lab">额外服务</span></div><ul><li>可协助预订机场接送，请至少提前1天联系我们。</li><li>可协助查询和预订下龙湾、宁平和河内城市游。</li><li>我们也可以分享河内景点、美食和饮品推荐。</li><li>入住前和退房后可免费寄存行李。</li></ul></div></details>
+      </section>
+      <section class="info-section" id="cn-checkin-checkout"><h3 class="info-title">2. 入住 &amp; 退房<span class="sub">Arrival and departure</span></h3>
+        <details class="info-block" id="cn-checkin"><summary>2.1 入住</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-01.webp" alt="Smart lock Ladi Homestay"><span class="ph-lab">入住</span></div><p>Ladi 使用<strong>智能门锁</strong>，可24小时自助入住，无需见面。包含视频和门锁密码的详细指南会在到达前一天发送。</p><blockquote><p>公寓位于圣若瑟大教堂旁的热门旅游区，部分时间车辆可能无法停在门口，您可能需要步行约<strong>100米</strong>到达公寓。</p></blockquote><ul><li><strong>入住：</strong><span class="ph">14:00</span>后。</li><li>大楼门码：<span class="ph">8386</span>，或轻推门。</li><li>步行上到<span class="ph">2楼</span>。</li><li>触摸门锁键盘 → 输入<span class="ph">2020</span> → 按<strong>#</strong>或<strong>✓</strong>。</li><li>请勿向外人分享门锁密码。</li></ul></div></details>
+        <details class="info-block" id="cn-checkout"><summary>2.2 退房</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/checkout.webp" alt="Check-out Ladi Homestay"><span class="ph-lab">退房</span></div><ul><li><strong>退房：</strong><span class="ph">11:00</span>前。</li><li>如需提前/延迟，请联系我们，如有空房会尽量安排。</li><li>入住前和退房后可<strong>免费寄存行李</strong>。</li><li>门关闭后会<strong>自动上锁</strong>。可触摸锁图标确认锁门。</li><li>离开前请关闭电器并检查个人物品。</li></ul></div></details>
+      </section>
+      <section class="info-section" id="cn-appliances"><h3 class="info-title">3. 室内设备使用指南<span class="sub">In-home appliance guide</span></h3>
+        <details class="info-block" id="cn-wifi"><summary>3.1 WiFi</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-06.webp" alt="WiFi Ladi Homestay"><span class="ph-lab">WiFi</span></div><p>免费稳定WiFi，适合在线会议和远程工作。</p><table><tr><td>网络名</td><td><span class="ph">Ladi</span></td></tr><tr><td>密码</td><td><span class="ph">12345689</span></td></tr></table><ol><li>关闭并重新打开手机WiFi后重新连接。</li><li>仍然较慢时，拔掉<span class="ph">天花板上方</span>路由器电源，等待30秒后再插回。</li><li>仍无法使用，请联系Host Ladi。</li></ol></div></details>
+        <details class="info-block" id="cn-ac"><summary>3.2 空调 &amp; 热水器</summary><div class="block-body content"><div class="ac-photo-row"><div class="photo block-photo"><img src="assets/images/image-15.webp" alt="AC and water heater Ladi Homestay"><span class="ph-lab">空调 &amp; 热水器</span></div><div class="photo block-photo"><img src="assets/images/image-02.webp" alt="Water heater switch Ladi Homestay"><span class="ph-lab">热水器开关</span></div></div><h5>空调</h5><ol><li>使用遥控器开关。</li><li>选择<strong>Cool</strong>模式。</li><li><strong>25-26°C</strong>较舒适且节能。</li><li>外出前请关闭。</li></ol><h5>热水器</h5><ol><li>打开<span class="ph">洗手台旁</span>的开关。</li><li>等待<strong>10-15分钟</strong>出热水。</li><li>使用浴缸时建议提前约20分钟开启。</li><li>洗澡后请关闭以确保安全。</li></ol></div></details>
+        <details class="info-block" id="cn-cooktop"><summary>3.3 电磁炉</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-07.webp" alt="Induction cooktop Ladi Homestay"><span class="ph-lab">电磁炉</span></div><blockquote><p>厨房已准备电热水壶、炉灶、抽油烟机、冰箱和基本厨具。</p></blockquote><ol><li>仅使用适用于电磁炉的平底锅具。</li><li>按<strong>Power</strong>，放上锅具后用<strong>+ / -</strong>调节火力。</li><li>做饭时请<strong>打开抽油烟机</strong>。</li><li>用完后关闭炉灶，待冷却后擦拭。</li></ol></div></details>
+        <details class="info-block" id="cn-microwave"><summary>3.4 微波炉</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-04.webp" alt="Microwave Ladi Homestay"><span class="ph-lab">微波炉</span></div><ol><li>仅使用可微波容器，勿放金属、锡纸或带金银边餐具。</li><li>关上门，选择时间并按<strong>Start</strong>。</li><li>加热时可半盖以防飞溅。</li><li>取出时注意烫手。</li></ol></div></details>
+        <details class="info-block" id="cn-tv"><summary>3.5 Smart TV</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-13.webp" alt="Smart TV Ladi Homestay"><span class="ph-lab">Smart TV</span></div><p>Smart TV 已安装 <strong>Netflix</strong> 和 <strong>YouTube</strong>。</p><ol><li>用遥控器开机。</li><li>如在HDMI界面，请选择<strong>Smart TV / Home</strong>。</li><li>如登录个人账号，请在退房前退出。</li></ol></div></details>
+        <details class="info-block" id="cn-laundry"><summary>3.6 洗烘一体机</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/laundry-area.webp" alt="Washer dryer Ladi Homestay"><span class="ph-lab">洗烘一体机</span></div><ul><li>洗烘一体机、洗衣液和柔顺剂免费提供。</li><li>请勿超量洗涤。</li><li>洗衣前请检查口袋。</li><li>使用后请将机门微开保持通风。</li></ul></div></details>
+        <details class="info-block" id="cn-heater"><summary>3.7 暖气设备</summary><div class="block-body content"><div class="route-layout heater-video-layout"><div class="route-video"><video controls playsinline preload="metadata" src="assets/videos/heater-guide.mp4"></video><span class="video-label">9:16 指南视频</span></div><div><p>请观看视频了解浴室暖气的使用方法。如需任何帮助，请联系我们。</p><ul><li>外出或睡觉前请关闭暖气。</li></ul></div></div></div></details>
+        <details class="info-block" id="cn-other"><summary>3.8 其他设备</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-12.webp" alt="Other devices Ladi Homestay"><span class="ph-lab">其他设备</span></div><ul><li>屋内灯光有白色、暖黄色和中性色三种。</li><li>床头灯和浴缸区域灯光让空间更温暖，也更适合拍照。</li><li>外出前请关闭所有电器，以避免电气问题或火灾风险。</li><li>仅可在室外吸烟，室内严禁吸烟。</li></ul></div></details>
+      </section>
+    </div></div>
+  </details>
+
+  <details class="lang-panel japanese">
+    <summary><span class="flag">JP</span><span class="lang-name cjk">詳しい情報を見るにはここをクリックしてください</span></summary>
+    <div class="inside"><div class="section-stack">
+      <section class="info-section" id="jp-general"><h3 class="info-title">1. 基本情報<span class="sub">General information</span></h3>
+        <details class="info-block" id="jp-address"><summary>1.1 場所</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/nha-tho-lon.webp" alt="St. Joseph Cathedral near Ladi Churchside 1"><span class="ph-lab">場所</span></div><div class="route-layout"><div><div class="route-video"><video controls playsinline preload="metadata" src="assets/videos/check-in-instruction.mp4"></video><span class="video-label">9:16 ガイド動画</span></div><div class="photo block-photo route-grab-photo"><img src="assets/images/cong-ca-phe.webp" alt="GrabはCong Ca Pheへ"><span class="ph-lab">GrabはCong Ca Pheへ</span></div></div><div><a class="map-button" href="https://maps.app.goo.gl/ymnfotyUvcRKWo1u5" target="_blank" rel="noopener">google map Ladi Homestay</a><p><strong>住所:</strong> No. 2 Nha Tho St., Hang Trong Ward, Hoan Kiem, Hanoi.<br><strong>お部屋:</strong> <span class="ph">2階</span> — Ladi Churchside 1。聖ヨセフ大聖堂のすぐ下の路地にあります。</p><blockquote><p><strong>Grabまたはタクシー利用時:</strong> 目的地を <strong>Cong Ca Phe - 27 Nha Tho Street</strong> に設定し、その後は案内動画に従ってください。観光エリア内のため車が入口まで入れない場合がありますが、Airbnbまでは徒歩約<strong>1分</strong>です。</p></blockquote><blockquote><p>建物は旧市街の古いタウンハウスで、<strong>エレベーターはありません</strong>。荷物が多い場合は事前にご連絡ください。必要に応じてスーツケース運びをできる限りサポートします。</p></blockquote><ul><li>聖ヨセフ大聖堂まで徒歩<strong>1分</strong>。</li><li>ホアンキエム湖、亀の塔、玉山祠、テフック橋、ブックストリート、ホアロー収容所まで徒歩<strong>4-5分</strong>。</li><li>タンロン水上人形劇場まで<strong>5分</strong>。</li><li>Hang Gai、Ta Hien、Trang Tien Plaza、文廟など旧市街の主要スポットまで約<strong>8分</strong>。</li><li>建物の下にはローカルのレモンティー、フォー、カフェがあります。</li></ul></div></div></div></details>
+        <details class="info-block" id="jp-extra"><summary>1.2 追加情報</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-12.webp" alt="Bedroom Ladi Homestay"><span class="ph-lab">追加情報</span></div><ul><li><strong>コンセプト:</strong> Scandi-Korean Fusion Style — ミニマルで温かく、落ち着いた空間。</li><li>2階全体をご利用いただけます。寝室2室、キッチン1つ、広いバスルームエリア1つ。</li><li>最大宿泊人数: <strong>大人4名と子ども1名</strong>。</li><li>WiFi、ワークデスク、ドレッサー、カーテン、ハンガーを用意しています。</li><li>バスタブ、タオル、シャンプー、ボディソープ、歯磨き粉、歯ブラシ、飲料水、お茶、コーヒーは無料です。</li><li>洗濯乾燥機、洗剤、柔軟剤も無料でご利用いただけます。</li></ul></div></details>
+        <details class="info-block" id="jp-rules"><summary>1.3 ハウスルール</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-14.webp" alt="House rules Ladi Homestay"><span class="ph-lab">ハウスルール</span></div><ul><li><strong>室内禁煙</strong>です。電子タバコも含みます。喫煙は指定の屋外エリアのみでお願いします。</li><li><strong>ペット、パーティー、未登録ゲスト</strong>は禁止です。</li><li><strong>23:00以降は静かに</strong>お過ごしください。</li><li>予約者以外にアクセスコードを共有しないでください。</li><li>衛生用品や濡れたタオルをトイレに流さないでください。</li><li>未成年のみの宿泊、許可のない商業撮影は禁止です。</li></ul></div></details>
+        <details class="info-block" id="jp-emergency"><summary>1.4 緊急連絡先</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/contact-emergency.webp" alt="Emergency contact Ladi Homestay"><span class="ph-lab">緊急連絡先</span></div><ul><li>Host <strong>Ladi</strong> (Superhost) — <span class="ph">+84 97 340 19 95</span>、通常1時間以内に返信します。</li><li>救急115 · 警察113 · 消防114。</li></ul></div></details>
+        <details class="info-block" id="jp-support"><summary>1.5 追加サポート</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/support-services.webp" alt="Support services Ladi Homestay"><span class="ph-lab">追加サポート</span></div><ul><li>空港送迎の手配をサポートできます。少なくとも1日前にご連絡ください。</li><li>ハロン湾、ニンビン、ハノイ市内ツアーの検索・予約をサポートできます。</li><li>ハノイの観光地、食べ物、飲み物のおすすめもお送りします。</li><li>チェックイン前・チェックアウト後の荷物預かりは無料です。</li></ul></div></details>
+      </section>
+      <section class="info-section" id="jp-checkin-checkout"><h3 class="info-title">2. チェックイン &amp; チェックアウト<span class="sub">Arrival and departure</span></h3>
+        <details class="info-block" id="jp-checkin"><summary>2.1 チェックイン</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-01.webp" alt="Smart lock Ladi Homestay"><span class="ph-lab">チェックイン</span></div><p>Ladiは<strong>スマートロック</strong>を使用しており、24時間セルフチェックインが可能です。動画と暗証番号を含む詳しい案内は到着前日にお送りします。</p><blockquote><p>お部屋は聖ヨセフ大聖堂の隣の観光エリアにあるため、時間帯によっては車が入口のすぐ前に停められない場合があります。約<strong>100m</strong>歩いていただくことがあります。</p></blockquote><ul><li><strong>チェックイン:</strong> <span class="ph">14:00</span>以降。</li><li>建物のコード: <span class="ph">8386</span>、またはドアを軽く押してください。</li><li><span class="ph">2階</span>へ階段でお上がりください。</li><li>キーパッドをタッチ → <span class="ph">2020</span>を入力 → <strong>#</strong> または <strong>✓</strong>。</li><li>アクセスコードを外部の方に共有しないでください。</li></ul></div></details>
+        <details class="info-block" id="jp-checkout"><summary>2.2 チェックアウト</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/checkout.webp" alt="Check-out Ladi Homestay"><span class="ph-lab">チェックアウト</span></div><ul><li><strong>チェックアウト:</strong> <span class="ph">11:00</span>まで。</li><li>早め/遅めの対応が必要な場合はご連絡ください。空き状況により対応します。</li><li>チェックイン前・チェックアウト後の<strong>荷物預かりは無料</strong>です。</li><li>ドアは閉めると<strong>自動で施錠</strong>されます。念のため鍵アイコンをタッチしてください。</li><li>出発前に電気機器を消し、忘れ物をご確認ください。</li></ul></div></details>
+      </section>
+      <section class="info-section" id="jp-appliances"><h3 class="info-title">3. 室内設備の使い方<span class="sub">In-home appliance guide</span></h3>
+        <details class="info-block" id="jp-wifi"><summary>3.1 WiFi</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-06.webp" alt="WiFi Ladi Homestay"><span class="ph-lab">WiFi</span></div><p>無料WiFiをご利用いただけます。オンライン会議やリモートワークにも十分です。</p><table><tr><td>ネットワーク</td><td><span class="ph">Ladi</span></td></tr><tr><td>パスワード</td><td><span class="ph">12345689</span></td></tr></table><ol><li>スマートフォンのWiFiをオフ/オンにして再接続してください。</li><li>遅い場合は、<span class="ph">天井上</span>のルーター電源を抜き、30秒待ってから再接続してください。</li><li>解決しない場合はHost Ladiへご連絡ください。</li></ol></div></details>
+        <details class="info-block" id="jp-ac"><summary>3.2 エアコン &amp; 給湯器</summary><div class="block-body content"><div class="ac-photo-row"><div class="photo block-photo"><img src="assets/images/image-15.webp" alt="AC and water heater Ladi Homestay"><span class="ph-lab">エアコン &amp; 給湯器</span></div><div class="photo block-photo"><img src="assets/images/image-02.webp" alt="Water heater switch Ladi Homestay"><span class="ph-lab">給湯器スイッチ</span></div></div><h5>エアコン</h5><ol><li>リモコンでオン/オフします。</li><li><strong>Cool</strong>モードを選択してください。</li><li><strong>25-26°C</strong>が快適で省エネです。</li><li>外出時は必ず消してください。</li></ol><h5>給湯器</h5><ol><li><span class="ph">洗面台の横</span>のスイッチを入れます。</li><li>お湯が出るまで<strong>10-15分</strong>お待ちください。</li><li>バスタブを使う場合は約20分前に入れてください。</li><li>使用後は安全のため消してください。</li></ol></div></details>
+        <details class="info-block" id="jp-cooktop"><summary>3.3 IHクッキングヒーター</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-07.webp" alt="Induction cooktop Ladi Homestay"><span class="ph-lab">IHクッキングヒーター</span></div><blockquote><p>キッチンには電気ケトル、コンロ、換気扇、冷蔵庫、基本的な調理器具を用意しています。</p></blockquote><ol><li>IH対応の平底鍋・フライパンのみ使用してください。</li><li><strong>Power</strong>を押し、鍋を置いて<strong>+ / -</strong>で火力を調整します。</li><li>調理中は<strong>換気扇</strong>をつけてください。</li><li>使用後は電源を切り、冷めてから拭いてください。</li></ol></div></details>
+        <details class="info-block" id="jp-microwave"><summary>3.4 電子レンジ</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-04.webp" alt="Microwave Ladi Homestay"><span class="ph-lab">電子レンジ</span></div><ol><li>電子レンジ対応の容器のみ使用し、金属やアルミホイル、金銀の縁取りがある食器は入れないでください。</li><li>ドアを閉め、時間を選んで<strong>Start</strong>を押します。</li><li>温める時は飛び散り防止のため軽く覆ってください。</li><li>取り出す際は熱さにご注意ください。</li></ol></div></details>
+        <details class="info-block" id="jp-tv"><summary>3.5 Smart TV</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-13.webp" alt="Smart TV Ladi Homestay"><span class="ph-lab">Smart TV</span></div><p>Smart TVには<strong>Netflix</strong>と<strong>YouTube</strong>が入っています。</p><ol><li>リモコンでテレビをつけます。</li><li>HDMI画面の場合は<strong>Smart TV / Home</strong>を選択してください。</li><li>個人アカウントでログインした場合は、チェックアウト前にログアウトしてください。</li></ol></div></details>
+        <details class="info-block" id="jp-laundry"><summary>3.6 洗濯乾燥機</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/laundry-area.webp" alt="Washer dryer Ladi Homestay"><span class="ph-lab">洗濯乾燥機</span></div><ul><li>洗濯乾燥機、洗剤、柔軟剤は無料でご利用いただけます。</li><li>入れすぎにご注意ください。</li><li>洗濯前にポケットをご確認ください。</li><li>使用後はドアを少し開けて換気してください。</li></ul></div></details>
+        <details class="info-block" id="jp-heater"><summary>3.7 ヒーター</summary><div class="block-body content"><div class="route-layout heater-video-layout"><div class="route-video"><video controls playsinline preload="metadata" src="assets/videos/heater-guide.mp4"></video><span class="video-label">9:16 ガイド動画</span></div><div><p>浴室ヒーターの使い方は動画をご確認ください。サポートが必要な場合は、私たちまでご連絡ください。</p><ul><li>外出前や就寝前にはヒーターを消してください。</li></ul></div></div></div></details>
+        <details class="info-block" id="jp-other"><summary>3.8 その他の設備</summary><div class="block-body content"><div class="photo block-photo"><img src="assets/images/image-12.webp" alt="Other devices Ladi Homestay"><span class="ph-lab">その他の設備</span></div><ul><li>室内の照明は白色、暖色、中間色の3色です。</li><li>ベッドサイドやバスタブ周りの照明は空間を温かくし、写真もきれいに撮れます。</li><li>外出前にはすべての電気機器を消してください。</li><li>喫煙は屋外のみ可能です。室内では絶対に喫煙しないでください。</li></ul></div></details>
+      </section>
+    </div></div>
+  </details>
+</div>
+  </div>
+</section>
+
+
+
+<!-- ============ FRIEND / HOST ============ -->
+<section class="favorite-proof" aria-label="Được khách yêu thích trên Airbnb">
+  <div class="favorite-card rv">
+    <div class="fav-badge">
+      <img src="assets/images/laurel-left.webp" alt="" aria-hidden="true">
+      <span>Được khách<br>yêu thích</span>
+      <img src="assets/images/laurel-right.webp" alt="" aria-hidden="true">
+    </div>
+    <div class="fav-copy">Khách đánh giá đây là một trong những ngôi nhà được yêu thích nhất trên Airbnb</div>
+    <div class="fav-score"><strong>4,94</strong><div class="fav-stars">★★★★★</div></div>
+    <div class="fav-reviews"><strong>17</strong><span>đánh giá</span></div>
+  </div>
+</section>
+
+<section class="friend" id="friend">
+  <div class="friend-inner">
+    <div class="photo friend-photo rv"><img src="assets/images/image-03.webp" alt="Host Ladi welcome card"><span class="ph-lab">Host Ladi</span></div>
+    <div class="friend-txt rv">
+      <h3>Chào mừng bạn đến với Ladi</h3>
+      <div class="fsub">Host Ladi — Superhost 6 năm</div>
+      <p>Tại Ladi, chúng tôi luôn mong mỗi vị khách đều cảm thấy thoải mái như đang trở về một căn nhà quen giữa lòng Hà Nội. Với 251 đánh giá, điểm trung bình 4.88 và tỷ lệ phản hồi 100% trong vòng 1 giờ, Ladi luôn sẵn sàng hỗ trợ bạn thật nhanh chóng — từ gửi hành lý, đặt tour Hạ Long – Ninh Bình, đến đón tiễn sân bay hay bất cứ điều gì bạn cần trong suốt kỳ lưu trú.</p>
+      <p>Hiện Ladi có 7 căn hộ tại 2 tòa nhà ở khu phố cổ Hoàn Kiếm, trong đó 5/7 căn đạt danh hiệu Guest Favorite, với điểm trung bình toàn hệ thống 4.91/5. Mỗi căn mang một phong cách riêng — Rustica, Scandi-Korean, Atelier — nhưng đều cùng một tinh thần: chỉn chu, ấm cúng, sống chậm và giữ trọn hơi thở Hà Nội.</p>
+      <div class="fcontact">
+        <div class="row"><span>Host Ladi (Superhost)</span><span class="ph">+84 97 340 19 95</span></div>
+        <div class="row"><span>Phản hồi</span><span>Trong 1 giờ · 24/7</span></div>
+        <div class="row"><span>Khẩn cấp</span><span>Cấp cứu 115 · CA 113 · PCCC 114</span></div>
+      </div>
+      <a href="https://www.airbnb.com/rooms/1451455893156768862" target="_blank" rel="noopener" class="btn">Đặt phòng trên Airbnb</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="fmk">Ladi</div>
+  <div class="ftag">Hanoi in your stay</div>
+  <div class="fline">Số 2 Nhà Thờ, Hoàn Kiếm, Hà Nội · Host Ladi (Superhost)</div>
+  <a href="#top" class="fcta">Về đầu trang</a>
+</footer>
+
+<script>
+  // nav background on scroll
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('solid', window.scrollY > window.innerHeight * 0.7);
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  // menu overlay
+  const ov = document.getElementById('overlay');
+  function openMenu(){ ov.classList.add('open'); document.body.style.overflow='hidden'; }
+  function closeMenu(){ ov.classList.remove('open'); document.body.style.overflow=''; }
+  document.addEventListener('keydown', e => { if(e.key==='Escape') closeMenu(); });
+
+  // reveal on scroll
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:0.12, rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+
+  // Convert old guide sections into the same 3-main-section accordion layout used by product pages.
+  function upgradeLanguageAccordions(){
+    const labels = {
+      vietnamese: {
+        general:['1. Thông tin chung','Information'],
+        check:['2. Check-in & Check-out','Arrival and departure'],
+        devices:['3. Hướng dẫn sử dụng các thiết bị trong nhà','In-home appliance guide']
+      },
+      english: {
+        general:['1. General Information','Information'],
+        check:['2. Check-in & Check-out','Arrival and departure'],
+        devices:['3. In-home Appliance Guide','Devices and amenities']
+      },
+      korean: {
+        general:['1. 기본 정보','Information'],
+        check:['2. 체크인 & 체크아웃','Arrival and departure'],
+        devices:['3. 실내 기기 사용 안내','Devices and amenities']
+      },
+      chinese: {
+        general:['1. 基本信息','Information'],
+        check:['2. 入住 & 退房','Arrival and departure'],
+        devices:['3. 室内设备使用指南','Devices and amenities']
+      },
+      japanese: {
+        general:['1. 基本情報','Information'],
+        check:['2. チェックイン & チェックアウト','Arrival and departure'],
+        devices:['3. 室内設備の使い方','Devices and amenities']
+      }
+    };
+    const classKey = panel => ['vietnamese','english','korean','chinese','japanese'].find(k => panel.classList.contains(k)) || 'english';
+    const sectionFor = id => {
+      const clean = (id || '').replace(/^(en|kr|cn|jp)-/, '');
+      if(clean.includes('checkin') || clean.includes('checkout')) return 'check';
+      if(clean.includes('diachi') || clean.includes('address') || clean.includes('rule') || clean.includes('contact') || clean.includes('support') || clean.includes('extra')) return 'general';
+      return 'devices';
+    };
+    document.querySelectorAll('.lang-panel').forEach(panel => {
+      const inside = panel.querySelector(':scope > .inside');
+      if(!inside || inside.querySelector(':scope > .section-stack')) return;
+      const guides = Array.from(inside.querySelectorAll(':scope > section.guide'));
+      if(!guides.length) return;
+      const key = classKey(panel);
+      const stack = document.createElement('div');
+      stack.className = 'section-stack';
+      const buckets = {};
+      ['general','check','devices'].forEach(name => {
+        const section = document.createElement('section');
+        section.className = 'info-section';
+        section.id = `${key}-${name}`;
+        const title = document.createElement('h3');
+        title.className = 'info-title';
+        title.innerHTML = `${labels[key][name][0]}<span class="sub">${labels[key][name][1]}</span>`;
+        section.appendChild(title);
+        buckets[name] = section;
+        stack.appendChild(section);
+      });
+      guides.forEach((guide, index) => {
+        const title = guide.querySelector('.guide-side h4')?.textContent.trim() || guide.querySelector('.gsub')?.textContent.trim() || `Section ${index + 1}`;
+        const details = document.createElement('details');
+        details.className = 'info-block';
+        if(guide.id) details.id = guide.id;
+        if(index === 0) details.open = true;
+        const summary = document.createElement('summary');
+        summary.textContent = title;
+        const body = document.createElement('div');
+        body.className = 'block-body content';
+        guide.querySelectorAll('.guide-side .photo').forEach(photo => {
+          photo.classList.remove('sphoto');
+          photo.classList.add('block-photo');
+          body.appendChild(photo);
+        });
+        const oldContent = guide.querySelector('.content');
+        if(oldContent){
+          while(oldContent.firstChild) body.appendChild(oldContent.firstChild);
+        }
+        details.append(summary, body);
+        buckets[sectionFor(guide.id)].appendChild(details);
+      });
+      inside.innerHTML = '';
+      inside.appendChild(stack);
+    });
+  }
+  upgradeLanguageAccordions();
+
+  function openInfoBlockForHash(){
+    if(!location.hash) return;
+    const target = document.querySelector(location.hash);
+    if(target && target.matches('details.info-block')){
+      const panel = target.closest('details.lang-panel');
+      if(panel) panel.open = true;
+      target.open = true;
+    }
+  }
+  // open language accordions when a nested anchor is requested
+  const vietnamesePanel = document.querySelector('.lang-panel.vietnamese');
+  const englishPanel = document.querySelector('.lang-panel.english');
+  const koreanPanel = document.querySelector('.lang-panel.korean');
+  const chinesePanel = document.querySelector('.lang-panel.chinese');
+  const japanesePanel = document.querySelector('.lang-panel.japanese');
+  const viHashes = new Set(['#diachi', '#thongtinthem', '#noiquy', '#khan-cap', '#hotro', '#checkin', '#checkout', '#wifi', '#dieuhoa', '#bep', '#lo', '#tv', '#maygiat', '#maysuoi', '#thietbikhac']);
+  function openVietnamesePanelForHash(){
+    if(!vietnamesePanel || !viHashes.has(location.hash)) return;
+    vietnamesePanel.open = true;
+  }
+  function openEnglishPanelForHash(){
+    if(!englishPanel || !location.hash.startsWith('#en-')) return;
+    englishPanel.open = true;
+  }
+  function openTranslatedPanelForHash(){
+    if(koreanPanel && location.hash.startsWith('#kr-')) koreanPanel.open = true;
+    if(chinesePanel && location.hash.startsWith('#cn-')) chinesePanel.open = true;
+    if(japanesePanel && location.hash.startsWith('#jp-')) japanesePanel.open = true;
+  }
+  document.querySelectorAll('a[href="#diachi"],a[href="#thongtinthem"],a[href="#noiquy"],a[href="#khan-cap"],a[href="#hotro"],a[href="#checkin"],a[href="#checkout"],a[href="#wifi"],a[href="#dieuhoa"],a[href="#bep"],a[href="#lo"],a[href="#tv"],a[href="#maygiat"],a[href="#maysuoi"],a[href="#thietbikhac"]').forEach(a=>{
+    a.addEventListener('click', () => {
+      if(vietnamesePanel) vietnamesePanel.open = true;
+    });
+  });
+  document.querySelectorAll('a[href^="#en-"]').forEach(a=>{
+    a.addEventListener('click', () => {
+      if(englishPanel) englishPanel.open = true;
+    });
+  });
+  document.querySelectorAll('a[href^="#kr-"]').forEach(a=>{
+    a.addEventListener('click', () => {
+      if(koreanPanel) koreanPanel.open = true;
+    });
+  });
+  document.querySelectorAll('a[href^="#cn-"]').forEach(a=>{
+    a.addEventListener('click', () => {
+      if(chinesePanel) chinesePanel.open = true;
+    });
+  });
+  document.querySelectorAll('a[href^="#jp-"]').forEach(a=>{
+    a.addEventListener('click', () => {
+      if(japanesePanel) japanesePanel.open = true;
+    });
+  });
+  window.addEventListener('hashchange', () => {
+    openVietnamesePanelForHash();
+    openEnglishPanelForHash();
+    openTranslatedPanelForHash();
+  });
+  openVietnamesePanelForHash();
+  openEnglishPanelForHash();
+  openTranslatedPanelForHash();
+  openInfoBlockForHash();
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+﻿# System files
+.DS_Store
+Thumbs.db
+
+# Local/editor files
+.vscode/
+.idea/
+*.log
+
+# Backups/source media should not be committed
+*_backup/
+*.mov
